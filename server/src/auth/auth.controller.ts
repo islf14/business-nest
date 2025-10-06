@@ -2,40 +2,36 @@ import {
   Body,
   Controller,
   Get,
-  HttpCode,
-  HttpStatus,
   Post,
   Request,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { AuthGuard, JwtPayloadUser } from './auth.guard';
 import { Public } from './auth.decorator';
+import { LocalAuthGuard } from './local-auth.guard';
+import { UserDB } from './auth.interface';
 
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Public()
-  @HttpCode(HttpStatus.OK)
+  @UseGuards(LocalAuthGuard)
   @Post('login')
-  signIng(@Body() signInDto: Record<string, any>) {
-    const username =
-      typeof signInDto.username === 'string' ? signInDto.username : '';
-    const password =
-      typeof signInDto.password === 'string' ? signInDto.password : '';
-    return this.authService.signIn(username, password);
+  login(@Request() req: { user: UserDB }): any {
+    return this.authService.login(req.user);
   }
 
-  @UseGuards(AuthGuard) // anulated with APP_GUARD in providers
+  // @UseGuards(AuthGuard) // anulated with APP_GUARD in providers
+  // @UseGuards(JwtAuthGuard)
   @Get('profile')
-  getProfile(@Request() req: { user: JwtPayloadUser }) {
+  getProfile(@Request() req: { user: UserDB }): any {
     return req.user;
   }
 
-  // @Public()
-  @Get('hi')
-  findAll() {
-    return [];
+  @UseGuards(LocalAuthGuard)
+  @Post('logout')
+  logout(@Request() req: { logout: () => void }): any {
+    return req.logout();
   }
 }
