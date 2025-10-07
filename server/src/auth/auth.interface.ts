@@ -1,9 +1,9 @@
 export interface UserPayload {
-  sub: string;
-  username: string;
+  id: number;
+  email: string;
 }
 
 export interface UserDB {
   userId: number;
-  username: string;
+  email: string;
 }
