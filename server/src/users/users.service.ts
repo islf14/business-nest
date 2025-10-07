@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Prisma, User } from 'generated/prisma';
 import { PrismaService } from 'src/prisma.service';
 
@@ -7,11 +7,56 @@ export class UsersService {
   //
   constructor(private prisma: PrismaService) {}
 
-  findOne({ email }: { email: string }): Promise<User | null> {
+  findOne({ id }: { id: number }): Promise<User | null> {
+    return this.prisma.user.findUnique({ where: { id } });
+  }
+
+  findOneByEmail({ email }: { email: string }): Promise<User | null> {
     return this.prisma.user.findUnique({ where: { email } });
   }
 
-  create({ data }: { data: Prisma.UserCreateInput }): Promise<User> {
-    return this.prisma.user.create({ data });
+  async create({ data }: { data: Prisma.UserCreateInput }): Promise<User> {
+    try {
+      return await this.prisma.user.create({ data });
+    } catch (e: unknown) {
+      if (e instanceof Error) console.log('Create error:', e.message);
+      throw new HttpException('Create error', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  findAll(): Promise<User[]> {
+    return this.prisma.user.findMany({ orderBy: { id: 'asc' } });
+  }
+
+  async update({
+    id,
+    data,
+  }: {
+    id: number;
+    data: Prisma.UserUpdateInput;
+  }): Promise<User> {
+    const user = await this.findOne({ id });
+    if (!user) {
+      throw new HttpException('Update error', HttpStatus.BAD_REQUEST);
+    }
+    try {
+      return await this.prisma.user.update({ where: { id }, data });
+    } catch (e: unknown) {
+      if (e instanceof Error) console.log('Update error:', e.message);
+      throw new HttpException('Update error', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  async remove({ id }: { id: number }): Promise<User> {
+    const user = await this.findOne({ id });
+    if (!user) {
+      throw new HttpException('Remove error', HttpStatus.BAD_REQUEST);
+    }
+    try {
+      return await this.prisma.user.delete({ where: { id } });
+    } catch (e: unknown) {
+      if (e instanceof Error) console.log('Remove error:', e.message);
+      throw new HttpException('Remove error', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }

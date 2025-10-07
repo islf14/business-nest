@@ -1,6 +1,4 @@
-import { Injectable } from '@nestjs/common';
-// import { CreateCategoryDto } from './dto/create-category.dto';
-import { UpdateCategoryDto } from './dto/update-category.dto';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { Category, Prisma } from 'generated/prisma';
 
@@ -9,23 +7,51 @@ export class CategoriesService {
   constructor(private prisma: PrismaService) {}
 
   create(createCategoryDto: Prisma.CategoryCreateInput): Promise<Category> {
-    return this.prisma.category.create({ data: createCategoryDto });
+    try {
+      return this.prisma.category.create({ data: createCategoryDto });
+    } catch (e: unknown) {
+      if (e instanceof Error) console.log('Create error:', e.message);
+      throw new HttpException('Create error', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   findAll(): Promise<Category[]> {
-    return this.prisma.category.findMany();
+    return this.prisma.category.findMany({ orderBy: { id: 'asc' } });
   }
 
-  findOne(id: number): Promise<Category | null> {
+  findOne({ id }: { id: number }): Promise<Category | null> {
     return this.prisma.category.findFirst({ where: { id } });
   }
 
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    console.log(updateCategoryDto);
-    return `This action updates a #${id} category`;
+  async update(
+    id: number,
+    updateCategoryDto: Prisma.CategoryUpdateInput,
+  ): Promise<Category> {
+    const cat = await this.findOne({ id });
+    if (!cat) {
+      throw new HttpException('update error', HttpStatus.BAD_REQUEST);
+    }
+    try {
+      return await this.prisma.category.update({
+        where: { id },
+        data: updateCategoryDto,
+      });
+    } catch (e: unknown) {
+      if (e instanceof Error) console.log('Update error:', e.message);
+      throw new HttpException('update error', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} category`;
+  async remove({ id }: { id: number }): Promise<Category> {
+    const cat = await this.findOne({ id });
+    if (!cat) {
+      throw new HttpException('remove error', HttpStatus.BAD_REQUEST);
+    }
+    try {
+      return await this.prisma.category.delete({ where: { id } });
+    } catch (e: unknown) {
+      if (e instanceof Error) console.log('Remove error:', e.message);
+      throw new HttpException('remove error', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 }

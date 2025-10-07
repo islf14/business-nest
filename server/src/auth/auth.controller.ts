@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
   HttpException,
   Post,
   Request,
@@ -19,6 +20,7 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Public()
+  @HttpCode(200)
   @UseGuards(LocalAuthGuard)
   @Post('login')
   login(@Request() req: { user: UserPayload }): { access_token: string } {

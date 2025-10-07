@@ -18,7 +18,7 @@ export class AuthService {
     email: string,
     password: string,
   ): Promise<UserPayload | null> {
-    const user = await this.usersService.findOne({ email });
+    const user = await this.usersService.findOneByEmail({ email });
     if (user) {
       if (user ? await bcrypt.compare(password, user.password) : false) {
         const result = { id: user.id, email: user.email };
@@ -34,7 +34,7 @@ export class AuthService {
   }
 
   async availabeEmail({ email }: { email: string }): Promise<boolean> {
-    const user = await this.usersService.findOne({ email });
+    const user = await this.usersService.findOneByEmail({ email });
     if (user) {
       return false;
     }

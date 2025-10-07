@@ -12,6 +12,7 @@ import {
   HttpStatus,
   UseInterceptors,
   UploadedFile,
+  HttpCode,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
@@ -23,44 +24,62 @@ import { Category } from 'generated/prisma';
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
+  //
+
   @Post()
   @UseInterceptors(FileInterceptor('file'))
   create(
     @UploadedFile() file: Express.Multer.File,
     @Body() createCategoryDto: CreateCategoryDto,
-  ) {
+  ): Promise<Category> {
     console.log(file);
     return this.categoriesService.create(createCategoryDto);
   }
 
+  //
+
   @Get()
-  findAll() {
+  findAll(): Promise<Category[]> {
     return this.categoriesService.findAll();
   }
+
+  //
 
   @Get(':id')
   @UsePipes(new ValidationPipe({ transform: true }))
   findOne(@Param('id') id: number): Promise<Category | null> {
     if (isNaN(Number(id))) {
-      console.log('it does not number');
       throw new HttpException('id must be a number', HttpStatus.BAD_REQUEST);
     }
-    const ab = id + 2;
-    console.log(ab);
-    console.log(3);
-    return this.categoriesService.findOne(+id);
+    return this.categoriesService.findOne({ id });
   }
+
+  //
 
   @Patch(':id')
+  @UseInterceptors(FileInterceptor('file'))
+  @UsePipes(new ValidationPipe({ transform: true }))
   update(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Body() updateCategoryDto: UpdateCategoryDto,
-  ) {
-    return this.categoriesService.update(+id, updateCategoryDto);
+  ): Promise<Category> {
+    if (isNaN(Number(id))) {
+      throw new HttpException('id must be a number', HttpStatus.BAD_REQUEST);
+    }
+    return this.categoriesService.update(id, updateCategoryDto);
   }
 
+  //
+
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.categoriesService.remove(+id);
+  @HttpCode(204)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  remove(@Param('id') id: number): Promise<Category> {
+    if (isNaN(Number(id))) {
+      throw new HttpException('id must be a number', HttpStatus.BAD_REQUEST);
+    }
+    return this.categoriesService.remove({ id });
   }
+
+  //
 }
