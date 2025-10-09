@@ -11,7 +11,7 @@ import {
 import { AuthService } from './auth.service';
 import { Public } from './auth.decorator';
 import { LocalAuthGuard } from './local-auth.guard';
-import { UserPayload } from './auth.interface';
+import { UserDB, UserPayload } from './auth.interface';
 import { RegisterDto } from './dto/register.dto';
 import { User } from 'generated/prisma';
 
@@ -23,8 +23,20 @@ export class AuthController {
   @HttpCode(200)
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  login(@Request() req: { user: UserPayload }): { access_token: string } {
-    return this.authService.login(req.user);
+  async login(@Request() req: { user: UserDB }): Promise<any> {
+    const userPayload: UserPayload = {
+      id: req.user.id,
+      email: req.user.email,
+    };
+    const { access_token } = this.authService.login(userPayload);
+    const role = await this.authService.getRoleByUserId(req.user.id);
+
+    const data = {
+      user: req.user,
+      role,
+      token: access_token,
+    };
+    return data;
   }
 
   @Public()

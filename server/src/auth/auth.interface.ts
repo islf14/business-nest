@@ -1,9 +1,7 @@
-export type UserPayload = {
+export type UserPayload = Omit<UserDB, 'name'>;
+
+export type UserDB = {
   id: number;
+  name: string;
   email: string;
 };
-
-export interface UserDB {
-  userId: number;
-  email: string;
-}

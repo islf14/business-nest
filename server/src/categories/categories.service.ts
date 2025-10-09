@@ -6,9 +6,11 @@ import { Category, Prisma } from 'generated/prisma';
 export class CategoriesService {
   constructor(private prisma: PrismaService) {}
 
-  create(createCategoryDto: Prisma.CategoryCreateInput): Promise<Category> {
+  async create(
+    createCategoryDto: Prisma.CategoryCreateInput,
+  ): Promise<Category> {
     try {
-      return this.prisma.category.create({ data: createCategoryDto });
+      return await this.prisma.category.create({ data: createCategoryDto });
     } catch (e: unknown) {
       if (e instanceof Error) console.log('Create error:', e.message);
       throw new HttpException('Create error', HttpStatus.INTERNAL_SERVER_ERROR);

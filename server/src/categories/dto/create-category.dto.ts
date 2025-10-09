@@ -1,3 +1,4 @@
+import { Transform, Type } from 'class-transformer';
 import {
   IsBoolean,
   IsNotEmpty,
@@ -18,9 +19,18 @@ export class CreateCategoryDto {
 
   @IsBoolean()
   @IsOptional()
+  @Transform(({ value }): boolean => {
+    if (value === 'true') return true;
+    if (value === 'false') return false;
+    return value;
+  })
   menu?: boolean;
 
   @IsNumber()
-  @IsOptional()
-  ord?: number;
+  @Type(() => Number)
+  ord: number;
+
+  photoUrl?: string;
+
+  //
 }

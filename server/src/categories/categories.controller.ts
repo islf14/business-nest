@@ -19,6 +19,7 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Category } from 'generated/prisma';
+import { join } from 'node:path';
 
 @Controller('categories')
 export class CategoriesController {
@@ -27,12 +28,14 @@ export class CategoriesController {
   //
 
   @Post()
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('photo'))
   create(
-    @UploadedFile() file: Express.Multer.File,
     @Body() createCategoryDto: CreateCategoryDto,
+    @UploadedFile() photo: Express.Multer.File,
   ): Promise<Category> {
-    console.log(file);
+    if (photo) {
+      createCategoryDto.photoUrl = photo.path;
+    }
     return this.categoriesService.create(createCategoryDto);
   }
 
@@ -40,6 +43,7 @@ export class CategoriesController {
 
   @Get()
   findAll(): Promise<Category[]> {
+    console.log(join(__dirname, '../..', 'uploads'));
     return this.categoriesService.findAll();
   }
 
@@ -57,14 +61,18 @@ export class CategoriesController {
   //
 
   @Patch(':id')
-  @UseInterceptors(FileInterceptor('file'))
   @UsePipes(new ValidationPipe({ transform: true }))
+  @UseInterceptors(FileInterceptor('photo'))
   update(
     @Param('id') id: number,
     @Body() updateCategoryDto: UpdateCategoryDto,
+    @UploadedFile() photo: Express.Multer.File,
   ): Promise<Category> {
     if (isNaN(Number(id))) {
       throw new HttpException('id must be a number', HttpStatus.BAD_REQUEST);
+    }
+    if (photo) {
+      updateCategoryDto.photoUrl = photo.path;
     }
     return this.categoriesService.update(id, updateCategoryDto);
   }
