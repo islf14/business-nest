@@ -41,14 +41,10 @@ export default function CategoryUpdate() {
             setOrd(Number(data.ord))
           }
           if (data.menu) {
-            if (data.menu === 1) {
-              setMenu(true)
-            } else {
-              setMenu(false)
-            }
+            setMenu(data.menu)
           }
-          if (data.photo_url) {
-            setPhoto_url(data.photo_url.slice(6))
+          if (data.photoUrl) {
+            setPhoto_url(data.photoUrl.slice(6))
           }
         })
         .catch(({ response }) => {
@@ -69,12 +65,10 @@ export default function CategoryUpdate() {
     let data: CategoryData = {
       name,
       description,
-      ord
+      ord,
+      menu
     }
-    let me
-    if (menu) me = 1
-    else me = 0
-    data = { ...data, menu: me }
+
     if (photo) {
       data = { ...data, photo }
     }
@@ -181,7 +175,7 @@ export default function CategoryUpdate() {
                 Image
               </label>
               <img
-                src={base_api_url + photo_url}
+                src={base_api_url + '/' + photo_url}
                 alt=""
                 className="img-fluid img-thumbnail"
               />

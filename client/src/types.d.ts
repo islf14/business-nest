@@ -18,7 +18,7 @@ export type Category = {
 export type CategoryData = {
   name: string
   description?: string
-  ord?: number
-  menu?: number
+  ord: number
+  menu?: boolean
   photo?: File
 }

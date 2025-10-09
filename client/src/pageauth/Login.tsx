@@ -21,10 +21,10 @@ export default function Login() {
     e.preventDefault()
     Api.getLogin({ email: emailProps.value, password: passwordProps.value })
       .then(({ data }) => {
-        if (data && data.token && data.user && data.rol) {
-          saveToken(data.token, data.user, data.rol.name)
-          if (data.rol.name === 'Admin' || data.rol.name === 'Client') {
-            navigate(`/${data.rol.name.toLowerCase()}`)
+        if (data && data.token && data.user && data.role) {
+          saveToken(data.token, data.user, data.role.name)
+          if (data.role.name === 'Admin' || data.role.name === 'Client') {
+            navigate(`/${data.role.name.toLowerCase()}`)
           } else {
             navigate('/')
           }

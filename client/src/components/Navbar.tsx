@@ -1,7 +1,7 @@
 import { useRef } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router'
 import { ListenDark } from './ListenDark'
-import { getRol, getToken, getUser } from '../pageauth/UserSession'
+import { getRole, getToken, getUser } from '../pageauth/UserSession'
 
 export default function Navbar() {
   const navigate = useNavigate()
@@ -77,7 +77,7 @@ export default function Navbar() {
         <>
           <div className="px-4 py-3">
             <span className="block text-sm text-gray-900 dark:text-white">
-              {getRol()}
+              {getRole()}
             </span>
             <span className="block text-sm  text-gray-500 truncate dark:text-gray-400">
               {getUser().email}
@@ -174,10 +174,10 @@ export default function Navbar() {
               </ul>
               <div className="py-1">
                 <Link
-                  to={`/${getRol().toLowerCase()}`}
+                  to={`/${getRole().toLowerCase()}`}
                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
                 >
-                  {getRol()}
+                  {getRole()}
                 </Link>
               </div>
             </div>

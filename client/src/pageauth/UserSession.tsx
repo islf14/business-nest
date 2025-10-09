@@ -14,16 +14,16 @@ export function getUser() {
   } else return ''
 }
 
-export function getRol() {
-  const rolString = sessionStorage.getItem('rol')
+export function getRole() {
+  const rolString = sessionStorage.getItem('role')
   if (rolString) {
     const rol = JSON.parse(rolString)
     return rol
   } else return ''
 }
 
-export function saveToken(token: string, user: object, rol: string) {
+export function saveToken(token: string, user: object, role: string) {
   sessionStorage.setItem('token', JSON.stringify(token))
   sessionStorage.setItem('user', JSON.stringify(user))
-  sessionStorage.setItem('rol', JSON.stringify(rol))
+  sessionStorage.setItem('role', JSON.stringify(role))
 }
