@@ -6,9 +6,9 @@ import { CategoriesModule } from './categories/categories.module';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { RolesModule } from './roles/roles.module';
+import { FileModule } from './file/file.module';
 // import { ServeStaticModule } from '@nestjs/serve-static';
 // import { join } from 'node:path';
-import { FileController } from './file/file.controller';
 
 @Module({
   imports: [
@@ -17,11 +17,12 @@ import { FileController } from './file/file.controller';
     AuthModule,
     UsersModule,
     RolesModule,
+    FileModule,
     // ServeStaticModule.forRoot({
     //   rootPath: join(__dirname, '..', 'public'),
     // }),
   ],
-  controllers: [AppController, FileController],
+  controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}

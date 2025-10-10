@@ -1,11 +1,15 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { Category, Prisma } from 'generated/prisma';
+import { FileService } from 'src/file/file.service';
 
 @Injectable()
 export class CategoriesService {
   //
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private fileService: FileService,
+  ) {}
 
   //
 
@@ -60,12 +64,17 @@ export class CategoriesService {
     if (!cat) {
       throw new HttpException('remove error', HttpStatus.BAD_REQUEST);
     }
+    let deletedCat: Category;
     try {
-      return await this.prisma.category.delete({ where: { id } });
+      deletedCat = await this.prisma.category.delete({ where: { id } });
     } catch (e: unknown) {
       if (e instanceof Error) console.log('Remove error:', e.message);
       throw new HttpException('remove error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
+    if (cat.photoUrl) {
+      await this.fileService.deleteUploadedFile(cat.photoUrl);
+    }
+    return deletedCat;
   }
 
   //

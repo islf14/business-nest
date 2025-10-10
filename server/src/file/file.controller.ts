@@ -17,9 +17,8 @@ export class FileController {
     try {
       await promises.access(fullPath);
     } catch (e: unknown) {
-      let m: string = '';
-      if (e instanceof Error) m = e.message;
-      throw new HttpException(`Error: ${m}`, HttpStatus.NOT_FOUND);
+      if (e instanceof Error)
+        throw new HttpException(`Does not exist`, HttpStatus.NOT_FOUND);
     }
 
     const file = createReadStream(fullPath);

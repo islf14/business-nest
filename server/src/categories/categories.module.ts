@@ -4,6 +4,7 @@ import { CategoriesController } from './categories.controller';
 import { PrismaService } from 'src/prisma.service';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
+import { FileModule } from 'src/file/file.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { diskStorage } from 'multer';
         },
       }),
     }),
+    FileModule,
   ],
   controllers: [CategoriesController],
   providers: [CategoriesService, PrismaService],
