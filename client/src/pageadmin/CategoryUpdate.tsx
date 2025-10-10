@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
-import Api, { base_api_url } from '../Api'
+import Api from '../Api'
 import { getToken } from '../pageauth/UserSession'
 import type { CategoryData } from '../types'
 
@@ -27,6 +27,7 @@ export default function CategoryUpdate() {
   const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (files) {
+      console.log(files)
       setPhoto(files[0])
     }
   }
@@ -34,21 +35,52 @@ export default function CategoryUpdate() {
   useEffect(() => {
     const getCategoryById = async () => {
       Api.getCategoryById(Number(id), header)
-        .then(({ data }) => {
-          setName(data.name)
-          setDescription(data.description)
-          if (data.ord !== null) {
-            setOrd(Number(data.ord))
+        .then(async ({ data }) => {
+          console.log(data)
+          const category = data.category
+          setName(category.name)
+          setDescription(category.description)
+          if (category.ord !== null) {
+            setOrd(Number(category.ord))
           }
-          if (data.menu) {
-            setMenu(data.menu)
+          if (category.menu) {
+            setMenu(category.menu)
           }
-          if (data.photoUrl) {
-            setPhoto_url(data.photoUrl.slice(6))
+
+          const image = data.image
+          if (image) {
+            console.log(image)
+            console.log(typeof image)
+            // const im = await image.blob()
+            // if (im) {
+            const objectUrl = URL.createObjectURL(image)
+            setPhoto_url(objectUrl)
+            // }
           }
+
+          // if (category.photoUrl) {
+          //   fetch(`${base_api_url}/file/${category.photoUrl}`, {
+          //     method: 'GET',
+          //     headers: {
+          //       Authorization: `Bearer ${getToken()}`,
+          //       'Content-type': 'application/json'
+          //     }
+          //   })
+          //     .then(async (response) => {
+          //       console.log(response)
+          //       const image = await response.blob()
+          //       if (image) {
+          //         const objectUrl = URL.createObjectURL(image)
+          //         setPhoto_url(objectUrl)
+          //       }
+          //     })
+          //     .catch((error) => {
+          //       console.log(error)
+          //     })
+          // }
         })
-        .catch(({ response }) => {
-          console.error(response.data.message)
+        .catch((response) => {
+          console.error(response)
           setMessage(response.data.message)
           if (response.status === 401) {
             sessionStorage.clear()
@@ -169,20 +201,21 @@ export default function CategoryUpdate() {
             </div>
             <div className="mb-4">
               <label
-                htmlFor="image"
+                htmlFor="photo"
                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
               >
                 Image
               </label>
               <img
-                src={base_api_url + '/' + photo_url}
+                src={photo_url}
                 alt=""
+                id="file"
                 className="img-fluid img-thumbnail"
               />
               <input
                 type="file"
-                id="image"
-                name="image"
+                id="photo"
+                name="photo"
                 className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 onChange={(e) => handleInputChange(e)}
               />

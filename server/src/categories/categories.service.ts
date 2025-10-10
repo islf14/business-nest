@@ -1,6 +1,13 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  StreamableFile,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { Category, Prisma } from 'generated/prisma';
+import { join } from 'path';
+import { createReadStream, promises } from 'fs';
 
 @Injectable()
 export class CategoriesService {
@@ -55,5 +62,26 @@ export class CategoriesService {
       if (e instanceof Error) console.log('Remove error:', e.message);
       throw new HttpException('remove error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
+  }
+
+  async getImage({
+    filename,
+  }: {
+    filename: string;
+  }): Promise<StreamableFile | string> {
+    const fullPath = join(process.cwd(), `public/uploads/${filename}`);
+    try {
+      await promises.access(fullPath);
+    } catch (e: unknown) {
+      let m: string = '';
+      if (e instanceof Error) m = e.message;
+      return `Error, path not found: ${m}`;
+    }
+    const file = createReadStream(fullPath);
+    const image: StreamableFile = new StreamableFile(file, {
+      type: 'image/jpeg',
+      disposition: 'inline; filename="fotito.jpg"',
+    });
+    return image;
   }
 }

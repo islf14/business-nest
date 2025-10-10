@@ -13,13 +13,18 @@ import {
   UseInterceptors,
   UploadedFile,
   HttpCode,
+  StreamableFile,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Category } from 'generated/prisma';
-import { join } from 'node:path';
+
+type dataCategory = {
+  category?: Category | null;
+  image?: StreamableFile | undefined;
+};
 
 @Controller('categories')
 export class CategoriesController {
@@ -34,7 +39,7 @@ export class CategoriesController {
     @UploadedFile() photo: Express.Multer.File,
   ): Promise<Category> {
     if (photo) {
-      createCategoryDto.photoUrl = photo.path;
+      createCategoryDto.photoUrl = photo.filename;
     }
     return this.categoriesService.create(createCategoryDto);
   }
@@ -43,7 +48,6 @@ export class CategoriesController {
 
   @Get()
   findAll(): Promise<Category[]> {
-    console.log(join(__dirname, '../..', 'uploads'));
     return this.categoriesService.findAll();
   }
 
@@ -51,11 +55,29 @@ export class CategoriesController {
 
   @Get(':id')
   @UsePipes(new ValidationPipe({ transform: true }))
-  findOne(@Param('id') id: number): Promise<Category | null> {
+  async findOne(@Param('id') id: number): Promise<dataCategory | null> {
     if (isNaN(Number(id))) {
       throw new HttpException('id must be a number', HttpStatus.BAD_REQUEST);
     }
-    return this.categoriesService.findOne({ id });
+    const category = await this.categoriesService.findOne({ id });
+    let image: StreamableFile | string = '';
+    if (category?.photoUrl) {
+      image = await this.categoriesService.getImage({
+        filename: category.photoUrl,
+      });
+    }
+
+    let data: dataCategory = {
+      category,
+    };
+    if (image instanceof StreamableFile) {
+      data = {
+        category,
+        image,
+      };
+    }
+
+    return data;
   }
 
   //
@@ -72,7 +94,7 @@ export class CategoriesController {
       throw new HttpException('id must be a number', HttpStatus.BAD_REQUEST);
     }
     if (photo) {
-      updateCategoryDto.photoUrl = photo.path;
+      updateCategoryDto.photoUrl = photo.filename;
     }
     return this.categoriesService.update(id, updateCategoryDto);
   }

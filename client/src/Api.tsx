@@ -28,5 +28,9 @@ export default {
   getCategoryUpdate: (id: number, data: object, token: object) =>
     axios.patch(`${base_api_url}/categories/${id}`, data, token),
   getCategoryDelete: (id: number, token: object) =>
-    axios.delete(`${base_api_url}/categories/${id}`, token)
+    axios.delete(`${base_api_url}/categories/${id}`, token),
+
+  // IMAGE
+  getCategoryImage: (name: string, token: object) =>
+    axios.get(`${base_api_url}/file/${name}`, token)
 }
