@@ -1,17 +1,13 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  StreamableFile,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { Category, Prisma } from 'generated/prisma';
-import { join } from 'path';
-import { createReadStream, promises } from 'fs';
 
 @Injectable()
 export class CategoriesService {
+  //
   constructor(private prisma: PrismaService) {}
+
+  //
 
   async create(
     createCategoryDto: Prisma.CategoryCreateInput,
@@ -24,13 +20,19 @@ export class CategoriesService {
     }
   }
 
+  //
+
   findAll(): Promise<Category[]> {
     return this.prisma.category.findMany({ orderBy: { id: 'asc' } });
   }
 
+  //
+
   findOne({ id }: { id: number }): Promise<Category | null> {
     return this.prisma.category.findFirst({ where: { id } });
   }
+
+  //
 
   async update(
     id: number,
@@ -51,6 +53,8 @@ export class CategoriesService {
     }
   }
 
+  //
+
   async remove({ id }: { id: number }): Promise<Category> {
     const cat = await this.findOne({ id });
     if (!cat) {
@@ -64,24 +68,5 @@ export class CategoriesService {
     }
   }
 
-  async getImage({
-    filename,
-  }: {
-    filename: string;
-  }): Promise<StreamableFile | string> {
-    const fullPath = join(process.cwd(), `public/uploads/${filename}`);
-    try {
-      await promises.access(fullPath);
-    } catch (e: unknown) {
-      let m: string = '';
-      if (e instanceof Error) m = e.message;
-      return `Error, path not found: ${m}`;
-    }
-    const file = createReadStream(fullPath);
-    const image: StreamableFile = new StreamableFile(file, {
-      type: 'image/jpeg',
-      disposition: 'inline; filename="fotito.jpg"',
-    });
-    return image;
-  }
+  //
 }

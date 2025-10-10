@@ -13,18 +13,12 @@ import {
   UseInterceptors,
   UploadedFile,
   HttpCode,
-  StreamableFile,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Category } from 'generated/prisma';
-
-type dataCategory = {
-  category?: Category | null;
-  image?: StreamableFile | undefined;
-};
 
 @Controller('categories')
 export class CategoriesController {
@@ -55,29 +49,11 @@ export class CategoriesController {
 
   @Get(':id')
   @UsePipes(new ValidationPipe({ transform: true }))
-  async findOne(@Param('id') id: number): Promise<dataCategory | null> {
+  async findOne(@Param('id') id: number): Promise<Category | null> {
     if (isNaN(Number(id))) {
       throw new HttpException('id must be a number', HttpStatus.BAD_REQUEST);
     }
-    const category = await this.categoriesService.findOne({ id });
-    let image: StreamableFile | string = '';
-    if (category?.photoUrl) {
-      image = await this.categoriesService.getImage({
-        filename: category.photoUrl,
-      });
-    }
-
-    let data: dataCategory = {
-      category,
-    };
-    if (image instanceof StreamableFile) {
-      data = {
-        category,
-        image,
-      };
-    }
-
-    return data;
+    return this.categoriesService.findOne({ id });
   }
 
   //

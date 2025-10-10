@@ -12,7 +12,7 @@ import { join } from 'path';
 @Controller('file')
 export class FileController {
   @Get(':name')
-  async getFile(@Param('name') name: string) {
+  async getFile(@Param('name') name: string): Promise<StreamableFile> {
     const fullPath = join(process.cwd(), `public/uploads/${name}`);
     try {
       await promises.access(fullPath);
@@ -23,14 +23,10 @@ export class FileController {
     }
 
     const file = createReadStream(fullPath);
-
-    const image = new StreamableFile(file, {
+    return new StreamableFile(file, {
       type: 'image/jpeg',
-      disposition: 'inline; filename="fotito.jpg"',
+      disposition: `inline; filename="${name}"`,
     });
-
-    console.log('after image');
-    return image;
   }
 }
 

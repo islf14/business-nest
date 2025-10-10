@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
-import Api from '../Api'
+import Api, { base_api_url } from '../Api'
 import { getToken } from '../pageauth/UserSession'
 import type { CategoryData } from '../types'
 
@@ -24,7 +24,7 @@ export default function CategoryUpdate() {
     []
   )
 
-  const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (files) {
       console.log(files)
@@ -33,11 +33,10 @@ export default function CategoryUpdate() {
   }
 
   useEffect(() => {
-    const getCategoryById = async () => {
+    const getCategoryById = () => {
       Api.getCategoryById(Number(id), header)
-        .then(async ({ data }) => {
-          console.log(data)
-          const category = data.category
+        .then(({ data }) => {
+          const category = data
           setName(category.name)
           setDescription(category.description)
           if (category.ord !== null) {
@@ -47,41 +46,29 @@ export default function CategoryUpdate() {
             setMenu(category.menu)
           }
 
-          const image = data.image
-          if (image) {
-            console.log(image)
-            console.log(typeof image)
-            // const im = await image.blob()
-            // if (im) {
-            const objectUrl = URL.createObjectURL(image)
-            setPhoto_url(objectUrl)
-            // }
+          if (category.photoUrl) {
+            fetch(`${base_api_url}/file/${category.photoUrl}`, {
+              method: 'GET',
+              headers: {
+                Authorization: `Bearer ${getToken()}`
+              }
+            })
+              .then(async (response) => {
+                const image = await response.blob()
+                if (image) {
+                  const objectUrl = URL.createObjectURL(image)
+                  setPhoto_url(objectUrl)
+                }
+              })
+              .catch((error) => {
+                console.error(error)
+              })
           }
-
-          // if (category.photoUrl) {
-          //   fetch(`${base_api_url}/file/${category.photoUrl}`, {
-          //     method: 'GET',
-          //     headers: {
-          //       Authorization: `Bearer ${getToken()}`,
-          //       'Content-type': 'application/json'
-          //     }
-          //   })
-          //     .then(async (response) => {
-          //       console.log(response)
-          //       const image = await response.blob()
-          //       if (image) {
-          //         const objectUrl = URL.createObjectURL(image)
-          //         setPhoto_url(objectUrl)
-          //       }
-          //     })
-          //     .catch((error) => {
-          //       console.log(error)
-          //     })
-          // }
         })
-        .catch((response) => {
-          console.error(response)
-          setMessage(response.data.message)
+        .catch(({ response }) => {
+          if (response.data.message) {
+            setMessage(response.data.message)
+          }
           if (response.status === 401) {
             sessionStorage.clear()
             navigate('/login')
