@@ -7,8 +7,8 @@ import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { RolesModule } from './roles/roles.module';
 import { FileModule } from './file/file.module';
-// import { ServeStaticModule } from '@nestjs/serve-static';
-// import { join } from 'node:path';
+import { CaslModule } from './casl/casl.module';
+import { CompanyModule } from './company/company.module';
 
 @Module({
   imports: [
@@ -18,6 +18,8 @@ import { FileModule } from './file/file.module';
     UsersModule,
     RolesModule,
     FileModule,
+    CaslModule,
+    CompanyModule,
     // ServeStaticModule.forRoot({
     //   rootPath: join(__dirname, '..', 'public'),
     // }),
