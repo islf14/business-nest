@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Role } from 'generated/prisma';
+import { ARole } from 'generated/prisma';
 import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
@@ -9,8 +9,12 @@ export class RolesService {
 
   //
 
-  async roleNameByUserId({ userId }: { userId: number }): Promise<Role | null> {
-    const role = await this.prismaService.userHasRole.findFirst({
+  async roleNameByUserId({
+    userId,
+  }: {
+    userId: number;
+  }): Promise<ARole | null> {
+    const role = await this.prismaService.aUserHasRole.findFirst({
       include: { role: true },
       where: { userId },
     });

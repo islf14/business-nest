@@ -16,6 +16,8 @@ import { User } from 'generated/prisma';
 import { UpdateUserDto } from './dto/update-user.dto';
 import bcrypt from 'bcrypt';
 import { saltOrRounds } from 'src/auth/constants';
+import { Roles } from 'src/roles/decorators/roles.decorator';
+import { Role } from 'src/roles/enums/role.enum';
 
 @Controller('users')
 export class UsersController {
@@ -43,6 +45,7 @@ export class UsersController {
   //
 
   @Patch(':id')
+  @Roles(Role.Admin)
   @UsePipes(new ValidationPipe({ transform: true }))
   async update(
     @Param('id') id: number,

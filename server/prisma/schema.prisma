@@ -22,7 +22,7 @@ model User {
   createdAt DateTime      @default(now())
   updatedAt DateTime      @updatedAt
   companies Company[]
-  roles     UserHasRole[]
+  roles     AUserHasRole[]
 }
 
 model Category {
@@ -54,37 +54,42 @@ model Company {
   updatedAt   DateTime  @updatedAt  
 }
 
-model Role {
+model ARole {
   id          Int                 @id @default(autoincrement())
   name        String              @unique
   createdAt   DateTime            @default(now())
   updatedAt   DateTime            @updatedAt
-  users       UserHasRole[]
-  permissions RoleHasPermission[]
+  users       AUserHasRole[]
+  permissions ARoleHasPermission[]
 }
 
-model Permission {
+model APermission {
   id        Int                 @id @default(autoincrement())
   name      String              @unique
   createdAt DateTime            @default(now())
   updatedAt DateTime            @updatedAt
-  roles     RoleHasPermission[]
+  roles     ARoleHasPermission[]
 }
 
-model UserHasRole {
+model AUserHasRole {
   user    User  @relation(fields: [userId], references: [id])
   userId  Int
-  role    Role  @relation(fields: [roleId], references: [id])
+  role    ARole  @relation(fields: [roleId], references: [id])
   roleId  Int
 
   @@id([userId, roleId])
 }
 
-model RoleHasPermission {
-  role          Role        @relation(fields: [roleId], references: [id])
+model ARoleHasPermission {
+  role          ARole        @relation(fields: [roleId], references: [id])
   roleId        Int
-  permission    Permission  @relation(fields: [permissionId], references: [id])
+  permission    APermission  @relation(fields: [permissionId], references: [id])
   permissionId  Int
 
   @@id([roleId, permissionId])
+}
+
+enum Role {
+  USER
+  ADMIN
 }

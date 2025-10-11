@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Api from '../Api'
 import { useNavigate } from 'react-router'
 import { getToken } from './UserSession'
@@ -7,6 +7,8 @@ export default function Register() {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [message, setMessage] = useState('')
+  const password2 = useRef<HTMLInputElement | null>(null)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -18,14 +20,17 @@ export default function Register() {
   // width button e: React.MouseEvent<HTMLButtonElement>
   const submitRegistro = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    Api.getRegister({ name, email, password })
-      .then(({ data }) => {
-        console.log(data)
-        navigate('/login')
-      })
-      .catch(({ response }) => {
-        console.log(response)
-      })
+    if (password === password2.current?.value) {
+      Api.getRegister({ name, email, password })
+        .then(() => {
+          navigate('/login')
+        })
+        .catch(({ response }) => {
+          console.log(response)
+        })
+    } else {
+      setMessage('The passwords are different')
+    }
   }
 
   return (
@@ -108,6 +113,7 @@ export default function Register() {
                 </label>
                 <input
                   type="password"
+                  ref={password2}
                   id="repeat-password"
                   placeholder="••••••••"
                   minLength={4}
@@ -139,6 +145,7 @@ export default function Register() {
                   </a>
                 </label>
               </div>
+              <p className="text-red-600">{message}</p>
               <button
                 type="submit"
                 className="wflex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"

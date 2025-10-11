@@ -27,7 +27,6 @@ export default function CategoryUpdate() {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (files) {
-      console.log(files)
       setPhoto(files[0])
     }
   }
