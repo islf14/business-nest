@@ -28,6 +28,7 @@ export class AuthController {
   async login(@Request() req: { user: UserDB }): Promise<any> {
     const role = await this.authService.getRoleByUserId(req.user.id);
     const userPayload: UserPayload = {
+      id: req.user.id,
       email: req.user.email,
       role: role?.name ?? 'unknown',
     };

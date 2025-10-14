@@ -6,5 +6,5 @@ export class User {
 export class Company {
   id: number;
   isPublished: boolean;
-  authorId: number;
+  userId: number;
 }

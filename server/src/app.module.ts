@@ -8,7 +8,7 @@ import { UsersModule } from './users/users.module';
 import { RolesModule } from './roles/roles.module';
 import { FileModule } from './file/file.module';
 import { CaslModule } from './casl/casl.module';
-import { CompanyModule } from './company/company.module';
+import { CompaniesModule } from './companies/companies.module';
 
 @Module({
   imports: [
@@ -19,7 +19,7 @@ import { CompanyModule } from './company/company.module';
     RolesModule,
     FileModule,
     CaslModule,
-    CompanyModule,
+    CompaniesModule,
     // ServeStaticModule.forRoot({
     //   rootPath: join(__dirname, '..', 'public'),
     // }),

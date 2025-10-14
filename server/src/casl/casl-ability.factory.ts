@@ -13,16 +13,18 @@ type Subjects = InferSubjects<typeof Company | typeof User> | 'all';
 export type AppAbility = MongoAbility<[Action, Subjects]>;
 
 export class CaslAbilityFactory {
-  createForUser(user: UserPayload) {
-    const { can, cannot, build } = new AbilityBuilder(createMongoAbility);
+  createForUser(user: UserPayload): AppAbility {
+    const { can, cannot, build } = new AbilityBuilder<AppAbility>(
+      createMongoAbility,
+    );
 
-    if (user.isAdmin) {
+    if (user.role === 'Admin') {
       can(Action.Manage, 'all'); // read-write access to everything
     } else {
       can(Action.Read, 'all'); // read-only access to everything
     }
 
-    can(Action.Update, Company, { authorId: user.id });
+    can(Action.Update, Company, { userId: user.id });
     cannot(Action.Delete, Company, { isPublished: true });
 
     return build({
