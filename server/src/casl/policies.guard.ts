@@ -21,8 +21,6 @@ export class PoliciesGuard implements CanActivate {
     const { user } = context.switchToHttp().getRequest<Request>();
     if (user) {
       const ability = this.caslAbilityFactory.createForUser(user);
-      console.log(policyHandlers);
-      console.log(ability);
       return policyHandlers.every((handler) =>
         this.execPolicyHandler(handler, ability),
       );
@@ -34,7 +32,6 @@ export class PoliciesGuard implements CanActivate {
     if (typeof handler === 'function') {
       return handler(ability);
     }
-    console.log(handler.handle(ability));
     return handler.handle(ability);
   }
 }

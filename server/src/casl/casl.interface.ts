@@ -18,8 +18,20 @@ export class ReadCompanyPolicyHandler implements IPolicyHandler {
   }
 }
 
+export class CreateCompanyPolicyHandler implements IPolicyHandler {
+  handle(ability: AppAbility) {
+    return ability.can(Action.Create, Company);
+  }
+}
+
 export class UpdateCompanyPolicyHandler implements IPolicyHandler {
   handle(ability: AppAbility) {
     return ability.can(Action.Update, Company);
+  }
+}
+
+export class DeleteCompanyPolicyHandler implements IPolicyHandler {
+  handle(ability: AppAbility) {
+    return ability.can(Action.Delete, Company);
   }
 }

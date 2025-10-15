@@ -18,7 +18,7 @@ export class CaslAbilityFactory {
       createMongoAbility,
     );
 
-    if (user.role === 'Admin') {
+    if (user.role === 'ADMIN') {
       can(Action.Manage, 'all'); // read-write access to everything
     } else {
       can(Action.Read, 'all'); // read-only access to everything
@@ -28,7 +28,6 @@ export class CaslAbilityFactory {
     cannot(Action.Delete, Company, { isPublished: true });
 
     return build({
-      // Read https://casl.js.org/v6/en/guide/subject-type-detection#use-classes-as-subject-types for details
       detectSubjectType: (item) =>
         item.constructor as ExtractSubjectType<Subjects>,
     });

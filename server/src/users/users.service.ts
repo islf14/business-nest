@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Prisma, User } from 'generated/prisma';
+import { UserDB } from 'src/auth/auth.interface';
 import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
@@ -24,8 +25,11 @@ export class UsersService {
     }
   }
 
-  findAll(): Promise<User[]> {
-    return this.prisma.user.findMany({ orderBy: { id: 'asc' } });
+  findAll(): Promise<UserDB[]> {
+    return this.prisma.user.findMany({
+      select: { id: true, name: true, email: true, role: true },
+      orderBy: { id: 'asc' },
+    });
   }
 
   async update({

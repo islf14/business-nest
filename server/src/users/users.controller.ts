@@ -12,14 +12,15 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { User } from 'generated/prisma';
+import { $Enums, User } from 'generated/prisma';
 import { UpdateUserDto } from './dto/update-user.dto';
 import bcrypt from 'bcrypt';
 import { saltOrRounds } from 'src/auth/constants';
 import { Roles } from 'src/roles/decorators/roles.decorator';
-import { Role } from 'src/roles/enums/role.enum';
+import { UserDB } from 'src/auth/auth.interface';
 
 @Controller('users')
+@Roles($Enums.Role.ADMIN)
 export class UsersController {
   //
   constructor(private usersService: UsersService) {}
@@ -27,7 +28,7 @@ export class UsersController {
   //
 
   @Get()
-  findAll(): Promise<User[]> {
+  findAll(): Promise<UserDB[]> {
     return this.usersService.findAll();
   }
 
@@ -45,7 +46,6 @@ export class UsersController {
   //
 
   @Patch(':id')
-  @Roles(Role.Admin)
   @UsePipes(new ValidationPipe({ transform: true }))
   async update(
     @Param('id') id: number,
