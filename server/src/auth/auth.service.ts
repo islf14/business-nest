@@ -3,17 +3,14 @@ import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
 import { UserDB, UserPayload } from './auth.interface';
 import { RegisterDto } from './dto/register.dto';
-import { $Enums, User } from 'generated/prisma';
 import bcrypt from 'bcrypt';
 import { saltOrRounds } from './constants';
-import { RolesService } from 'src/roles/roles.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private usersService: UsersService,
     private jwtService: JwtService,
-    private rolesService: RolesService,
   ) {}
 
   async validateUser(email: string, password: string): Promise<UserDB | null> {
@@ -24,7 +21,7 @@ export class AuthService {
           id: user.id,
           name: user.name,
           email: user.email,
-          role: user.role as $Enums.Role,
+          role: user.role,
         };
         return result;
       }
@@ -44,11 +41,10 @@ export class AuthService {
     return true;
   }
 
-  async register(user: RegisterDto): Promise<Omit<User, 'password'>> {
+  async register(user: RegisterDto): Promise<UserDB> {
     const hashedPassword = await bcrypt.hash(user.password, saltOrRounds);
     user.password = hashedPassword;
     const result = await this.usersService.create({ data: user });
-    result.password = '********';
     return result;
   }
 }

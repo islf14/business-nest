@@ -13,7 +13,7 @@ import { Public } from './decorators/public.decorator';
 import { LocalAuthGuard } from './local-auth.guard';
 import { UserDB, UserPayload } from './auth.interface';
 import { RegisterDto } from './dto/register.dto';
-import { $Enums, User } from 'generated/prisma';
+import { $Enums } from 'generated/prisma';
 import { Roles } from 'src/roles/decorators/roles.decorator';
 
 @Controller('auth')
@@ -41,7 +41,7 @@ export class AuthController {
 
   @Public()
   @Post('register')
-  async register(@Body() body: RegisterDto): Promise<Omit<User, 'password'>> {
+  async register(@Body() body: RegisterDto): Promise<UserDB> {
     const isAvailable = await this.authService.availabeEmail({
       email: body.email,
     });

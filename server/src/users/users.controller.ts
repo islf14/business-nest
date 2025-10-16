@@ -12,7 +12,7 @@ import {
   ValidationPipe,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { $Enums, User } from 'generated/prisma';
+import { $Enums } from 'generated/prisma';
 import { UpdateUserDto } from './dto/update-user.dto';
 import bcrypt from 'bcrypt';
 import { saltOrRounds } from 'src/auth/constants';
@@ -36,7 +36,7 @@ export class UsersController {
 
   @Get(':id')
   @UsePipes(new ValidationPipe({ transform: true }))
-  findOne(@Param('id') id: number): Promise<User | null> {
+  findOne(@Param('id') id: number): Promise<UserDB | null> {
     if (isNaN(Number(id))) {
       throw new HttpException('id must be a number', HttpStatus.BAD_REQUEST);
     }
@@ -50,7 +50,7 @@ export class UsersController {
   async update(
     @Param('id') id: number,
     @Body() updateUserDto: UpdateUserDto,
-  ): Promise<User> {
+  ): Promise<UserDB> {
     if (isNaN(Number(id))) {
       throw new HttpException('id must be a number', HttpStatus.BAD_REQUEST);
     }
@@ -69,7 +69,7 @@ export class UsersController {
   @Delete(':id')
   @HttpCode(204)
   @UsePipes(new ValidationPipe({ transform: true }))
-  remove(@Param('id') id: number): Promise<User> {
+  remove(@Param('id') id: number): Promise<UserDB> {
     if (isNaN(Number(id))) {
       throw new HttpException('id must be a number', HttpStatus.BAD_REQUEST);
     }

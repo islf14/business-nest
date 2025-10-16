@@ -13,16 +13,13 @@ import { CompaniesModule } from './companies/companies.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    CategoriesModule,
     AuthModule,
-    UsersModule,
     RolesModule,
-    FileModule,
     CaslModule,
+    UsersModule,
+    FileModule,
+    CategoriesModule,
     CompaniesModule,
-    // ServeStaticModule.forRoot({
-    //   rootPath: join(__dirname, '..', 'public'),
-    // }),
   ],
   controllers: [AppController],
   providers: [AppService],

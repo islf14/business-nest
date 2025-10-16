@@ -22,6 +22,8 @@ import { Category } from 'generated/prisma';
 
 @Controller('categories')
 export class CategoriesController {
+  //
+
   constructor(private readonly categoriesService: CategoriesService) {}
 
   //

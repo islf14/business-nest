@@ -11,6 +11,7 @@ export class PoliciesGuard implements CanActivate {
     private reflector: Reflector,
     private caslAbilityFactory: CaslAbilityFactory,
   ) {}
+
   canActivate(context: ExecutionContext): boolean {
     const policyHandlers =
       this.reflector.get<PolicyHandler[]>(
@@ -18,6 +19,9 @@ export class PoliciesGuard implements CanActivate {
         context.getHandler(),
       ) || [];
 
+    if (policyHandlers.length === 0) {
+      return true;
+    }
     const { user } = context.switchToHttp().getRequest<Request>();
     if (user) {
       const ability = this.caslAbilityFactory.createForUser(user);
