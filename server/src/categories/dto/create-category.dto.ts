@@ -9,6 +9,7 @@ import {
 
 export class CreateCategoryDto {
   //
+
   @IsString()
   @IsNotEmpty()
   name: string;
@@ -27,6 +28,7 @@ export class CreateCategoryDto {
   menu?: boolean;
 
   @IsNumber()
+  @IsNotEmpty()
   @Type(() => Number)
   ord: number;
 

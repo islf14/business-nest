@@ -13,9 +13,11 @@ export class CategoriesService {
 
   //
 
-  async create(
-    createCategoryDto: Prisma.CategoryCreateInput,
-  ): Promise<Category> {
+  async create({
+    createCategoryDto,
+  }: {
+    createCategoryDto: Prisma.CategoryCreateInput;
+  }): Promise<Category> {
     try {
       return await this.prisma.category.create({ data: createCategoryDto });
     } catch (e: unknown) {
@@ -38,12 +40,15 @@ export class CategoriesService {
 
   //
 
-  async update(
-    id: number,
-    updateCategoryDto: Prisma.CategoryUpdateInput,
-  ): Promise<Category> {
-    const cat = await this.findOne({ id });
-    if (!cat) {
+  async update({
+    id,
+    updateCategoryDto,
+  }: {
+    id: number;
+    updateCategoryDto: Prisma.CategoryUpdateInput;
+  }): Promise<Category> {
+    const category = await this.findOne({ id });
+    if (!category) {
       throw new HttpException('update error', HttpStatus.BAD_REQUEST);
     }
     try {
@@ -60,8 +65,8 @@ export class CategoriesService {
   //
 
   async remove({ id }: { id: number }): Promise<Category> {
-    const cat = await this.findOne({ id });
-    if (!cat) {
+    const category = await this.findOne({ id });
+    if (!category) {
       throw new HttpException('remove error', HttpStatus.BAD_REQUEST);
     }
     let deletedCat: Category;
@@ -71,8 +76,8 @@ export class CategoriesService {
       if (e instanceof Error) console.log('Remove error:', e.message);
       throw new HttpException('remove error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    if (cat.photoUrl) {
-      await this.fileService.deleteUploadedFile(cat.photoUrl);
+    if (category.photoUrl) {
+      await this.fileService.deleteUploadedFile(category.photoUrl);
     }
     return deletedCat;
   }

@@ -20,5 +20,6 @@ import { FileModule } from 'src/file/file.module';
   ],
   controllers: [CategoriesController],
   providers: [CategoriesService, PrismaService],
+  exports: [CategoriesService],
 })
 export class CategoriesModule {}

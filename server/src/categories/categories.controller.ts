@@ -19,6 +19,13 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Category } from 'generated/prisma';
+import { CheckPolicies } from 'src/casl/decorators/policies.decorator';
+import {
+  CreateCategoryPolicyHandler,
+  DeleteCategoryPolicyHandler,
+  ReadCategoryPolicyHandler,
+  UpdateCategoryPolicyHandler,
+} from 'src/casl/casl.interface';
 
 @Controller('categories')
 export class CategoriesController {
@@ -29,6 +36,7 @@ export class CategoriesController {
   //
 
   @Post()
+  @CheckPolicies(new CreateCategoryPolicyHandler())
   @UseInterceptors(FileInterceptor('photo'))
   create(
     @Body() createCategoryDto: CreateCategoryDto,
@@ -37,12 +45,13 @@ export class CategoriesController {
     if (photo) {
       createCategoryDto.photoUrl = photo.filename;
     }
-    return this.categoriesService.create(createCategoryDto);
+    return this.categoriesService.create({ createCategoryDto });
   }
 
   //
 
   @Get()
+  @CheckPolicies(new ReadCategoryPolicyHandler())
   findAll(): Promise<Category[]> {
     return this.categoriesService.findAll();
   }
@@ -50,6 +59,7 @@ export class CategoriesController {
   //
 
   @Get(':id')
+  @CheckPolicies(new ReadCategoryPolicyHandler())
   @UsePipes(new ValidationPipe({ transform: true }))
   async findOne(@Param('id') id: number): Promise<Category | null> {
     if (isNaN(Number(id))) {
@@ -61,6 +71,7 @@ export class CategoriesController {
   //
 
   @Patch(':id')
+  @CheckPolicies(new UpdateCategoryPolicyHandler())
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseInterceptors(FileInterceptor('photo'))
   update(
@@ -74,13 +85,14 @@ export class CategoriesController {
     if (photo) {
       updateCategoryDto.photoUrl = photo.filename;
     }
-    return this.categoriesService.update(id, updateCategoryDto);
+    return this.categoriesService.update({ id, updateCategoryDto });
   }
 
   //
 
   @Delete(':id')
   @HttpCode(204)
+  @CheckPolicies(new DeleteCategoryPolicyHandler())
   @UsePipes(new ValidationPipe({ transform: true }))
   remove(@Param('id') id: number): Promise<Category> {
     if (isNaN(Number(id))) {
