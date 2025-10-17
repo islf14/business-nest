@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
-import { UserDB, UserPayload } from './auth.interface';
+import { UserDB, UserPayload, UserShow } from './auth.interface';
 import { RegisterDto } from './dto/register.dto';
 import bcrypt from 'bcrypt';
 import { saltOrRounds } from './constants';
@@ -41,7 +41,7 @@ export class AuthService {
     return true;
   }
 
-  async register(user: RegisterDto): Promise<UserDB> {
+  async register(user: RegisterDto): Promise<UserShow> {
     const hashedPassword = await bcrypt.hash(user.password, saltOrRounds);
     user.password = hashedPassword;
     const result = await this.usersService.create({ data: user });

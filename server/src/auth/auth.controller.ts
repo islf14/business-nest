@@ -11,7 +11,7 @@ import {
 import { AuthService } from './auth.service';
 import { Public } from './decorators/public.decorator';
 import { LocalAuthGuard } from './local-auth.guard';
-import { UserDB, UserPayload } from './auth.interface';
+import { UserDB, UserPayload, UserShow } from './auth.interface';
 import { RegisterDto } from './dto/register.dto';
 import { $Enums } from 'generated/prisma';
 import { Roles } from 'src/roles/decorators/roles.decorator';
@@ -32,8 +32,13 @@ export class AuthController {
     };
     const { access_token } = this.authService.login(userPayload);
 
+    const userShow: UserShow = {
+      email: req.user.email,
+      name: req.user.name,
+      role: req.user.role,
+    };
     const data = {
-      user: req.user,
+      user: userShow,
       token: access_token,
     };
     return data;
@@ -41,7 +46,7 @@ export class AuthController {
 
   @Public()
   @Post('register')
-  async register(@Body() body: RegisterDto): Promise<UserDB> {
+  async register(@Body() body: RegisterDto): Promise<UserShow> {
     const isAvailable = await this.authService.availabeEmail({
       email: body.email,
     });

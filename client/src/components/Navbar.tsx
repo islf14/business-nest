@@ -10,8 +10,6 @@ export default function Navbar() {
   const menuButton = useRef<HTMLButtonElement | null>(null)
   const navUser = useRef<HTMLDivElement | null>(null)
   const navButton = useRef<HTMLButtonElement | null>(null)
-  const dropUser = useRef<HTMLDivElement | null>(null)
-  const dropButton = useRef<HTMLButtonElement | null>(null)
 
   // listen for click outside the open menu
   document.addEventListener('mousedown', closeOpenMenus)
@@ -30,19 +28,9 @@ export default function Navbar() {
     ) {
       navUser.current?.classList.add('hidden')
     }
-
-    if (
-      !dropButton.current?.contains(e.target as Node) &&
-      !dropUser.current?.contains(e.target as Node)
-    ) {
-      dropUser.current?.classList.add('hidden')
-    }
   }
 
   // view or hide the open menu
-  function toggleDropdown() {
-    dropUser.current?.classList.toggle('hidden')
-  }
   function toggleNav() {
     navUser.current?.classList.toggle('hidden')
   }
@@ -84,33 +72,13 @@ export default function Navbar() {
             </span>
           </div>
 
-          <ul className="py-2" aria-labelledby="user-menu-button">
-            <li>
-              <a
-                href="#"
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-              >
-                Profile
-              </a>
-            </li>
-            <li>
-              <a
-                href="#"
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-              >
-                Settings
-              </a>
-            </li>
-            <li>
-              <a
-                href="/logout"
-                onClick={(e) => logoutUser(e)}
-                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-              >
-                Sign out
-              </a>
-            </li>
-          </ul>
+          <a
+            href="/logout"
+            onClick={(e) => logoutUser(e)}
+            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+          >
+            Sign out
+          </a>
         </>
       )
     }
@@ -121,66 +89,14 @@ export default function Navbar() {
       return (
         <>
           <li>
-            <button
-              id="dropdownNavbarLink"
-              onClick={toggleDropdown}
-              ref={dropButton}
-              data-dropdown-toggle="dropdownNavbar"
-              type="button"
-              className="flex items-center justify-between w-full py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0 md:w-auto dark:text-white md:dark:hover:text-blue-500 dark:focus:text-white dark:border-gray-700 dark:hover:bg-gray-700 md:dark:hover:bg-transparent"
+            <Link
+              to={`/${
+                getRole().toLowerCase() === 'admin' ? 'admin' : 'client'
+              }`}
+              className="block py-2 px-3 text-gray-900 rounded-sm hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
             >
-              Options{' '}
-              <svg
-                className="w-2.5 h-2.5 ms-2.5"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 10 6"
-              >
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="m1 1 4 4 4-4"
-                />
-              </svg>
-            </button>
-            <div
-              ref={dropUser}
-              id="dropdownNavbar"
-              className="z-10 absolute font-normal bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 dark:divide-gray-600 hidden"
-            >
-              <ul
-                className="py-2 text-sm text-gray-700 dark:text-gray-400"
-                aria-labelledby="dropdownNavbar"
-              >
-                <li>
-                  <a
-                    href=""
-                    className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                  >
-                    Business
-                  </a>
-                </li>
-                <li>
-                  <a
-                    href="#"
-                    className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                  >
-                    Category
-                  </a>
-                </li>
-              </ul>
-              <div className="py-1">
-                <Link
-                  to={`/${getRole().toLowerCase()}`}
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                >
-                  {getRole()}
-                </Link>
-              </div>
-            </div>
+              {getRole().toLowerCase() === 'admin' ? 'Admin' : 'Client'}
+            </Link>
           </li>
         </>
       )

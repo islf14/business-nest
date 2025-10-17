@@ -1,12 +1,14 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Prisma, User } from 'generated/prisma';
-import { UserDB } from 'src/auth/auth.interface';
+import { UserDB, UserShow } from 'src/auth/auth.interface';
 import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
 export class UsersService {
   //
   constructor(private prisma: PrismaService) {}
+
+  //
 
   findOne({ id }: { id: number }): Promise<UserDB | null> {
     return this.prisma.user.findUnique({
@@ -15,14 +17,18 @@ export class UsersService {
     });
   }
 
+  //
+
   findOneByEmail({ email }: { email: string }): Promise<User | null> {
     return this.prisma.user.findUnique({ where: { email } });
   }
 
-  async create({ data }: { data: Prisma.UserCreateInput }): Promise<UserDB> {
+  //
+
+  async create({ data }: { data: Prisma.UserCreateInput }): Promise<UserShow> {
     try {
       return await this.prisma.user.create({
-        select: { id: true, name: true, email: true, role: true },
+        select: { name: true, email: true, role: true },
         data,
       });
     } catch (e: unknown) {
@@ -31,12 +37,16 @@ export class UsersService {
     }
   }
 
+  //
+
   findAll(): Promise<UserDB[]> {
     return this.prisma.user.findMany({
       select: { id: true, name: true, email: true, role: true },
       orderBy: { id: 'asc' },
     });
   }
+
+  //
 
   async update({
     id,
@@ -47,7 +57,14 @@ export class UsersService {
   }): Promise<UserDB> {
     const user = await this.findOne({ id });
     if (!user) {
-      throw new HttpException('Update error', HttpStatus.BAD_REQUEST);
+      throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+    }
+    const email = data.email as string;
+    if (email !== undefined && user.email !== data.email) {
+      const exist = await this.findOneByEmail({ email: email });
+      if (exist) {
+        throw new HttpException('User exists', HttpStatus.BAD_REQUEST);
+      }
     }
     try {
       return await this.prisma.user.update({
@@ -56,10 +73,12 @@ export class UsersService {
         data,
       });
     } catch (e: unknown) {
-      if (e instanceof Error) console.log('Update error:', e.message);
+      if (e instanceof Error) console.log('Update user error:', e.message);
       throw new HttpException('Update error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  //
 
   async remove({ id }: { id: number }): Promise<UserDB> {
     const user = await this.findOne({ id });
@@ -76,4 +95,6 @@ export class UsersService {
       throw new HttpException('Remove error', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
+
+  //
 }

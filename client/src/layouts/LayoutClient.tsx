@@ -8,7 +8,7 @@ export default function LayoutClient() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    if (getRole().toLowerCase() != 'client') {
+    if (getRole().toLowerCase() != 'user') {
       navigate('/')
     }
   }, [navigate])

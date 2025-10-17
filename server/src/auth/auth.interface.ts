@@ -13,6 +13,8 @@ export type UserDB = {
   role: $Enums.Role;
 };
 
+export type UserShow = Omit<UserDB, 'id'>;
+
 declare module 'express' {
   export interface Request {
     user?: UserPayload;

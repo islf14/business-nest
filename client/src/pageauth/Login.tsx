@@ -23,8 +23,10 @@ export default function Login() {
       .then(({ data }) => {
         if (data && data.token && data.user) {
           saveToken(data.token, data.user, data.user.role)
-          if (data.user.role === 'ADMIN' || data.user.role === 'USER') {
-            navigate(`/${data.user.role.toLowerCase()}`)
+          if (data.user.role === 'ADMIN') {
+            navigate('/admin')
+          } else if (data.user.role === 'USER') {
+            navigate('/client')
           } else {
             navigate('/')
           }
