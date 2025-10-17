@@ -15,6 +15,7 @@ import { UserDB, UserPayload, UserShow } from './auth.interface';
 import { RegisterDto } from './dto/register.dto';
 import { $Enums } from 'generated/prisma';
 import { Roles } from 'src/roles/decorators/roles.decorator';
+import { Throttle } from '@nestjs/throttler';
 
 @Controller('auth')
 export class AuthController {
@@ -45,6 +46,7 @@ export class AuthController {
   }
 
   @Public()
+  @Throttle({ default: { limit: 3, ttl: 120000 } })
   @Post('register')
   async register(@Body() body: RegisterDto): Promise<UserShow> {
     const isAvailable = await this.authService.availabeEmail({

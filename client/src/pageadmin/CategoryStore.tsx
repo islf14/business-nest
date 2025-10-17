@@ -38,8 +38,7 @@ export default function CategoryStore() {
     }
 
     await Api.getCategoryStore(data, header)
-      .then((data) => {
-        if (data.status == 201) console.log('Created successfully')
+      .then(() => {
         navigate('/admin/category')
       })
       .catch(({ response }) => {

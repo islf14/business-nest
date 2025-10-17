@@ -31,9 +31,13 @@ export class CaslAbilityFactory {
 
     if (user.role === 'ADMIN') {
       can(Action.Manage, 'all'); // read-write access to everything
-    } else {
-      can(Action.Read, 'all'); // read-only access to everything
     }
+    // else {
+    //   can(Action.Read, 'all'); // read-only access to everything
+    // }
+
+    can(Action.Read, 'Category');
+    can(Action.Read, 'Company');
 
     can(Action.Update, 'Company', { userId: user.id });
     cannot(Action.Delete, 'Company', { userId: !user.id });

@@ -9,10 +9,25 @@ import { RolesModule } from './roles/roles.module';
 import { FileModule } from './file/file.module';
 import { CaslModule } from './casl/casl.module';
 import { CompaniesModule } from './companies/companies.module';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          ttl: 60000,
+          limit: 10,
+        },
+      ],
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public/dist'),
+    }),
     AuthModule,
     RolesModule,
     CaslModule,
@@ -22,6 +37,6 @@ import { CompaniesModule } from './companies/companies.module';
     CompaniesModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, { provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
 export class AppModule {}

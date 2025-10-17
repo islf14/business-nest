@@ -92,8 +92,7 @@ export default function CategoryUpdate() {
     }
 
     await Api.getCategoryUpdate(Number(id), data, header)
-      .then((data) => {
-        if (data.status == 200) console.log('Updated successfully')
+      .then(() => {
         navigate('/admin/category')
       })
       .catch(({ response }) => {

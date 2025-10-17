@@ -4,6 +4,7 @@ import Footer from '../components/Footer'
 import { Outlet, useNavigate } from 'react-router'
 import Aside from '../components/Aside'
 import { getRole } from '../pageauth/UserSession'
+import NotFound from '../pagepublic/NotFound'
 
 export default function LayoutAdmin() {
   const navigate = useNavigate()
@@ -13,11 +14,26 @@ export default function LayoutAdmin() {
     }
   }, [navigate])
 
+  function renderComponents() {
+    if (getRole().toLowerCase() === 'admin') {
+      return (
+        <>
+          <Aside />
+          <Outlet />
+        </>
+      )
+    } else {
+      return (
+        <>
+          <NotFound />
+        </>
+      )
+    }
+  }
   return (
     <>
       <Navbar />
-      <Aside />
-      <Outlet />
+      {renderComponents()}
       <Footer />
     </>
   )
