@@ -43,9 +43,7 @@ export default function CategoryAll() {
     const isDelete = window.confirm('Delete Category?')
     if (isDelete) {
       await Api.getCategoryDelete(id, token)
-        .then((data) => {
-          if (data.status == 204) console.log('Deleted successfully')
-        })
+        .then(() => {})
         .catch(({ response }) => {
           console.log(response)
         })
