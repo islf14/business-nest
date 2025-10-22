@@ -4,6 +4,7 @@ const ACCEPTED_ORIGINS = [
   'http://localhost:5173',
   'http://localhost:4173',
   `http://localhost:${process.env.PORT ?? 3000}`,
+  'https://business-nest.onrender.com/',
 ];
 
 export const corsConfig = (whitelist: string[] = ACCEPTED_ORIGINS) => {
