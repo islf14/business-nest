@@ -4,7 +4,7 @@ const ACCEPTED_ORIGINS = [
   'http://localhost:5173',
   'http://localhost:4173',
   `http://localhost:${process.env.PORT ?? 3000}`,
-  'https://business-nest.onrender.com/',
+  'https://business-nest.onrender.com',
 ];
 
 export const corsConfig = (whitelist: string[] = ACCEPTED_ORIGINS) => {
@@ -13,6 +13,7 @@ export const corsConfig = (whitelist: string[] = ACCEPTED_ORIGINS) => {
       origin: string | undefined,
       callback: (err: Error | null, origin?: StaticOrigin) => void,
     ) {
+      console.log(origin);
       if (!origin || whitelist.indexOf(origin) !== -1) {
         callback(null, true);
       } else {
