@@ -1,4 +1,4 @@
-import { Route, BrowserRouter as Router, Routes } from 'react-router'
+import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router'
 import LayoutPublic from './layouts/LayoutPublic'
 import LayoutAdmin from './layouts/LayoutAdmin'
 import LayoutClient from './layouts/LayoutClient'
@@ -48,6 +48,7 @@ export default function RouterApp() {
             <Route path="homme" element={<PageHome />} />
           </Route>
         </Route>
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Router>
   )
