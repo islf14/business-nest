@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
-import Api, { base_api_url } from '../Api'
+import Api from '../Api'
 import { getToken } from '../pageauth/UserSession'
 import type { CategoryData } from '../types'
+import { base_api_url } from '../constants'
 
 export default function CategoryUpdate() {
   const navigate = useNavigate()
@@ -24,10 +25,18 @@ export default function CategoryUpdate() {
     []
   )
 
+  // Image has been uploaded
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
+    const maxSize = 350 * 1024 // 350KB in bytes
     if (files) {
-      setPhoto(files[0])
+      if (files[0] && files[0].size <= maxSize) {
+        setPhoto(files[0])
+        setMessage('')
+      } else {
+        e.target.value = ''
+        setMessage('Image must be smaller than 350KB')
+      }
     }
   }
 
@@ -202,7 +211,7 @@ export default function CategoryUpdate() {
                 id="photo"
                 name="photo"
                 className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                onChange={(e) => handleInputChange(e)}
+                onChange={handleInputChange}
               />
             </div>
             <p className="text-red-600">{message}</p>

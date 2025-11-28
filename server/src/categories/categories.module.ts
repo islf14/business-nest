@@ -15,6 +15,9 @@ import { FileModule } from 'src/file/file.module';
           cb(null, Date.now() + '-' + file.originalname);
         },
       }),
+      limits: {
+        fileSize: 350 * 1024, // 350 KB in bytes
+      },
     }),
     FileModule,
   ],

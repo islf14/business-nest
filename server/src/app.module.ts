@@ -17,6 +17,7 @@ import { join } from 'path';
 @Module({
   imports: [
     ConfigModule.forRoot(),
+    // Rate limit for all routes
     ThrottlerModule.forRoot({
       throttlers: [
         {
@@ -25,6 +26,7 @@ import { join } from 'path';
         },
       ],
     }),
+    // dist from react-vite
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public/dist'),
     }),

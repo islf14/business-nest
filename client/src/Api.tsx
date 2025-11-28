@@ -1,7 +1,5 @@
 import axios from 'axios'
-
-export const base_api_url = `${window.location.origin}`
-// export const base_api_url = 'http://localhost:3003'
+import { base_api_url } from './constants'
 
 export default {
   //AUTH

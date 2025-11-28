@@ -26,6 +26,7 @@ import {
   ReadCategoryPolicyHandler,
   UpdateCategoryPolicyHandler,
 } from 'src/casl/casl.interface';
+import { Throttle } from '@nestjs/throttler';
 
 @Controller('categories')
 export class CategoriesController {
@@ -33,8 +34,9 @@ export class CategoriesController {
 
   constructor(private readonly categoriesService: CategoriesService) {}
 
-  //
+  // Create - limit 2 every 2 minutes
 
+  @Throttle({ default: { limit: 3, ttl: 120000 } })
   @Post()
   @CheckPolicies(new CreateCategoryPolicyHandler())
   @UseInterceptors(FileInterceptor('photo'))
@@ -48,7 +50,7 @@ export class CategoriesController {
     return this.categoriesService.create({ createCategoryDto });
   }
 
-  //
+  // Find all categories
 
   @Get()
   @CheckPolicies(new ReadCategoryPolicyHandler())
@@ -68,8 +70,9 @@ export class CategoriesController {
     return this.categoriesService.findOne({ id });
   }
 
-  //
+  // Update a category
 
+  @Throttle({ default: { limit: 4, ttl: 120000 } })
   @Patch(':id')
   @CheckPolicies(new UpdateCategoryPolicyHandler())
   @UsePipes(new ValidationPipe({ transform: true }))

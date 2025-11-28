@@ -20,8 +20,15 @@ export default function CategoryStore() {
 
   const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
+    const maxSize = 350 * 1024 // 350KB in bytes
     if (files) {
-      setPhoto(files[0])
+      if (files[0] && files[0].size <= maxSize) {
+        setPhoto(files[0])
+        setMessage('')
+      } else {
+        e.target.value = ''
+        setMessage('Image must be smaller than 350KB')
+      }
     }
   }
 
@@ -126,13 +133,13 @@ export default function CategoryStore() {
                 id="image"
                 name="image"
                 className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                onChange={(e) => handleInputChange(e)}
+                onChange={handleInputChange}
               />
               <div
                 className="mt-1 text-sm text-gray-500 dark:text-gray-300"
                 id="user_avatar_help"
               >
-                A category picture is useful
+                Note: Maximum size 350 KB
               </div>
             </div>
             <p className="text-red-600">{message}</p>
