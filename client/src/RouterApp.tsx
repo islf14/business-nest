@@ -23,6 +23,7 @@ import About from './pagepublic/About'
 import Contact from './pagepublic/Contact'
 
 export default function RouterApp() {
+  console.log('RouterApp rendered')
   return (
     <Router>
       <Routes>
