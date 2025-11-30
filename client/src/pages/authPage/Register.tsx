@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
-import Api from '../Api'
+import Api from '../../Api'
 import { useNavigate } from 'react-router'
-import { getToken } from './UserSession'
+import useAuth from '../../hooks/useAuth'
 
 export default function Register() {
+  const { getToken } = useAuth()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')

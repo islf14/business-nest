@@ -1,32 +1,25 @@
-import { useEffect, useMemo, useState } from 'react'
-import { Link, useNavigate, useParams } from 'react-router'
-import Api from '../Api'
-import { getToken } from '../pageauth/UserSession'
-import type { CategoryData } from '../types'
-import { base_api_url } from '../constants'
+import { useState } from 'react'
+import { Link, useNavigate } from 'react-router'
+import Api from '../../Api'
+import type { CategoryData } from '../../types'
+import useAuth from '../../hooks/useAuth'
 
-export default function CategoryUpdate() {
-  const navigate = useNavigate()
-  const { id } = useParams()
+export default function CategoryStore() {
+  const { getToken } = useAuth()
   const [name, setName] = useState<string>('')
   const [description, setDescription] = useState<string>('')
   const [ord, setOrd] = useState<number>(0)
-  const [menu, setMenu] = useState<boolean>(false)
   const [photo, setPhoto] = useState<File>()
-  const [photo_url, setPhoto_url] = useState('foto.jpg')
   const [message, setMessage] = useState<string>('')
-  const header = useMemo(
-    () => ({
-      headers: {
-        Authorization: `Bearer ${getToken()}`,
-        'Content-Type': 'multipart/form-data'
-      }
-    }),
-    []
-  )
+  const navigate = useNavigate()
+  const header = {
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+      'Content-Type': 'multipart/form-data'
+    }
+  }
 
-  // Image has been uploaded
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     const maxSize = 350 * 1024 // 350KB in bytes
     if (files) {
@@ -40,108 +33,39 @@ export default function CategoryUpdate() {
     }
   }
 
-  useEffect(() => {
-    const getCategoryById = () => {
-      Api.getCategoryById(Number(id), header)
-        .then(({ data }) => {
-          const category = data
-          setName(category.name)
-          setDescription(category.description)
-          if (category.ord !== null) {
-            setOrd(Number(category.ord))
-          }
-          if (category.menu) {
-            setMenu(category.menu)
-          }
-
-          if (category.photoUrl) {
-            fetch(`${base_api_url}/file/${category.photoUrl}`, {
-              method: 'GET',
-              headers: {
-                Authorization: `Bearer ${getToken()}`
-              }
-            })
-              .then(async (response) => {
-                const image = await response.blob()
-                if (image) {
-                  const objectUrl = URL.createObjectURL(image)
-                  setPhoto_url(objectUrl)
-                }
-              })
-              .catch((error) => {
-                console.error(error)
-              })
-          }
-        })
-        .catch(({ response }) => {
-          if (response.data.message) {
-            setMessage(response.data.message)
-          }
-          if (response.status === 401) {
-            sessionStorage.clear()
-            navigate('/login')
-          }
-        })
-    }
-    getCategoryById()
-  }, [id, header, navigate])
-
-  const submitUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
+  const submitStore = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
     let data: CategoryData = {
       name,
       description,
-      ord,
-      menu
+      ord
     }
-
     if (photo) {
       data = { ...data, photo }
     }
 
-    await Api.getCategoryUpdate(Number(id), data, header)
+    await Api.getCategoryStore(data, header)
       .then(() => {
         navigate('/admin/category')
       })
       .catch(({ response }) => {
-        console.log(response)
-        if (typeof response.data.message === 'string') {
-          setMessage(response.data.message)
-        } else {
-          setMessage(response.data.message[0].message)
-        }
+        setMessage(response.data.message)
         if (response.status === 401) {
           sessionStorage.clear()
           navigate('/login')
         }
       })
   }
-
   return (
     <div className="p-4 md:ml-56">
-      <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-70">
+      <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
         <div className="text-lg text-gray-900 dark:text-white mb-4">
-          Update category
+          Create category
         </div>
         <div className="">
-          <form action="" onSubmit={submitUpdate}>
-            <div className="grid md:grid-cols-3 md:gap-6">
-              <div className="relative z-0 w-full mb-5 group">
-                <label className="flex items-center justify-center mb-5 cursor-pointer">
-                  <input
-                    checked={menu}
-                    onChange={() => setMenu(!menu)}
-                    id="menu"
-                    type="checkbox"
-                    className="sr-only peer"
-                  />
-                  <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:w-5 after:h-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-blue-600"></div>
-                  <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
-                    Menu
-                  </span>
-                </label>
-              </div>
+          <form action="" onSubmit={submitStore}>
+            <div className="grid md:grid-cols-2 md:gap-6">
               <div className="relative z-0 w-full mb-5 group">
                 <label
                   htmlFor="name"
@@ -150,13 +74,15 @@ export default function CategoryUpdate() {
                   Name
                 </label>
                 <input
-                  type="text"
-                  id="name"
                   name="name"
+                  id="name"
+                  type="text"
+                  autoComplete="name"
+                  placeholder="Name"
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   value={name}
-                  autoComplete="name"
                   onChange={(e) => setName(e.target.value)}
+                  required
                 />
               </div>
               <div className="relative z-0 w-full mb-5 group">
@@ -167,9 +93,11 @@ export default function CategoryUpdate() {
                   Order
                 </label>
                 <input
-                  type="number"
-                  name="order"
                   id="order"
+                  name="order"
+                  type="number"
+                  placeholder="0"
+                  min={0}
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   value={ord}
                   onChange={(e) => setOrd(Number(e.target.value))}
@@ -184,8 +112,9 @@ export default function CategoryUpdate() {
                 Description
               </label>
               <textarea
-                name="description"
                 id="description"
+                name="description"
+                placeholder="Description"
                 minLength={6}
                 className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 value={description}
@@ -195,24 +124,24 @@ export default function CategoryUpdate() {
             </div>
             <div className="mb-4">
               <label
-                htmlFor="photo"
+                htmlFor="image"
                 className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
               >
-                Image
+                Upload image:
               </label>
-              <img
-                src={photo_url}
-                alt=""
-                id="file"
-                className="img-fluid img-thumbnail"
-              />
               <input
                 type="file"
-                id="photo"
-                name="photo"
+                id="image"
+                name="image"
                 className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 onChange={handleInputChange}
               />
+              <div
+                className="mt-1 text-sm text-gray-500 dark:text-gray-300"
+                id="user_avatar_help"
+              >
+                Note: Maximum size 350 KB
+              </div>
             </div>
             <p className="text-red-600">{message}</p>
             <div className="mt-4">
@@ -230,7 +159,7 @@ export default function CategoryUpdate() {
                 type="submit"
                 className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
               >
-                Update Category
+                Create category
               </button>
             </div>
           </form>

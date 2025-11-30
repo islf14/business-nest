@@ -1,12 +1,11 @@
 import { useEffect } from 'react'
-import Navbar from '../components/Navbar'
-import Footer from '../components/Footer'
 import { Outlet, useNavigate } from 'react-router'
-import Aside from '../components/Aside'
-import { getRole } from '../pageauth/UserSession'
-import NotFound from '../pagepublic/NotFound'
+import Aside from '../../components/Aside'
+import NotFound from '../publicPage/NotFound'
+import useAuth from '../../hooks/useAuth'
 
 export default function LayoutAdmin() {
+  const { getRole } = useAuth()
   const navigate = useNavigate()
   useEffect(() => {
     if (getRole().toLowerCase() != 'admin') {
@@ -30,11 +29,5 @@ export default function LayoutAdmin() {
       )
     }
   }
-  return (
-    <>
-      <Navbar />
-      {renderComponents()}
-      <Footer />
-    </>
-  )
+  return <>{renderComponents()}</>
 }

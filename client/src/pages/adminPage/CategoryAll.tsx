@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router'
-import Api from '../Api'
-import { getToken } from '../pageauth/UserSession'
-import type { Category } from '../types'
+import Api from '../../Api'
+import useAuth from '../../hooks/useAuth'
+import type { Category } from '../../types'
 
 export default function CategoryAll() {
+  const { getToken } = useAuth()
   const navigate = useNavigate()
   const [categories, setCategories] = useState<Category[]>([])
   const token = useMemo(

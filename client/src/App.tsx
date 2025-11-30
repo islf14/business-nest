@@ -1,10 +1,10 @@
-import { DarkProvider } from './components/DarkProvider'
+import { ThemeProvider } from './providers/ThemeProvider'
 import RouterApp from './RouterApp'
 
 export default function App() {
   return (
-    <DarkProvider>
+    <ThemeProvider>
       <RouterApp />
-    </DarkProvider>
+    </ThemeProvider>
   )
 }

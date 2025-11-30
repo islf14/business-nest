@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router'
-import Api from '../Api'
+import Api from '../../Api'
 import { Link } from 'react-router'
-import { useFormInput } from '../components/UseFormInput'
-import { getToken, saveToken } from './UserSession'
+import { useFormInput } from '../../components/UseFormInput'
+import useAuth from '../../hooks/useAuth'
 
 export default function Login() {
+  const { getToken, saveToken } = useAuth()
   const emailProps = useFormInput('')
   const passwordProps = useFormInput('')
   const [message, setMessage] = useState('')

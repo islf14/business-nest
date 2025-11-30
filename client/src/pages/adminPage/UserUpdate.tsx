@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
-import Api from '../Api'
+import Api from '../../Api'
 import { Link } from 'react-router'
-import { getToken } from '../pageauth/UserSession'
-import type { UserUpdateData } from '../types'
+import type { UserUpdateData } from '../../types'
+import useAuth from '../../hooks/useAuth'
 
 export default function UserUpdate() {
+  const { getToken } = useAuth()
   const navigate = useNavigate()
   const { id } = useParams()
   const [name, setName] = useState<string>('')

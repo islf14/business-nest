@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
-import Api from '../Api'
+import Api from '../../Api'
 import { Link, useNavigate } from 'react-router'
-import { getToken } from '../pageauth/UserSession'
-import type { User } from '../types'
+import type { User } from '../../types'
+import useAuth from '../../hooks/useAuth'
 
 export default function UserAll() {
+  const { getToken } = useAuth()
   const navigate = useNavigate()
   const [users, setUsers] = useState<User[]>([])
   const token = useMemo(

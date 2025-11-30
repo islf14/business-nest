@@ -1,31 +1,33 @@
 import { Navigate, Route, BrowserRouter as Router, Routes } from 'react-router'
-import LayoutPublic from './layouts/LayoutPublic'
-import LayoutAdmin from './layouts/LayoutAdmin'
-import LayoutClient from './layouts/LayoutClient'
+import LayoutPublic from './pages/layouts/LayoutPublic'
+import LayoutAdmin from './pages/layouts/LayoutAdmin'
+import LayoutClient from './pages/layouts/LayoutClient'
 
 //PUBLIC
-import PageHome from './pagepublic/PageHome'
-import ProtectedRoutes from './pageauth/ProtectedRoutes'
+import PageHome from './pages/publicPage/PageHome'
+import ProtectedRoutes from './pages/authPage/ProtectedRoutes'
 
 //AUTH
-import Login from './pageauth/Login'
-import Register from './pageauth/Register'
-import PanelAdmin from './pageadmin/PanelAdmin'
-import PanelClient from './pageclient/PanelClient'
+import Login from './pages/authPage/Login'
+import Register from './pages/authPage/Register'
+import PanelAdmin from './pages/adminPage/PanelAdmin'
+import PanelClient from './pages/clientPage/PanelClient'
 
-import UserAll from './pageadmin/UserAll'
-import UserUpdate from './pageadmin/UserUpdate'
-import CategoryAll from './pageadmin/CategoryAll'
-import CategoryStore from './pageadmin/CategoryStore'
-import CategoryUpdate from './pageadmin/CategoryUpdate'
-import CompanyAll from './pageadmin/CompanyAll'
-import About from './pagepublic/About'
-import Contact from './pagepublic/Contact'
+import UserAll from './pages/adminPage/UserAll'
+import UserUpdate from './pages/adminPage/UserUpdate'
+import CategoryAll from './pages/adminPage/CategoryAll'
+import CategoryStore from './pages/adminPage/CategoryStore'
+import CategoryUpdate from './pages/adminPage/CategoryUpdate'
+import CompanyAll from './pages/adminPage/CompanyAll'
+import About from './pages/publicPage/About'
+import Contact from './pages/publicPage/Contact'
+import Header from './components/Header'
+import Footer from './components/Footer'
 
 export default function RouterApp() {
-  console.log('RouterApp rendered')
   return (
     <Router>
+      <Header />
       <Routes>
         <Route path="/" element={<LayoutPublic />}>
           <Route index element={<PageHome />} />
@@ -51,6 +53,7 @@ export default function RouterApp() {
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      <Footer />
     </Router>
   )
 }
