@@ -29,5 +29,5 @@ export default function LayoutAdmin() {
       )
     }
   }
-  return <>{renderComponents()}</>
+  return <div>{renderComponents()}</div>
 }

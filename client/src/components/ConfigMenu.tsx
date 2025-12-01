@@ -1,18 +1,20 @@
 import { Link } from 'react-router'
 import ConfigIcon from './svg/ConfigIcon'
-// import { getRole, getToken, getUser } from '../hooks/useAuth'
 import { useEffect, useRef, useState } from 'react'
 import ThemeList from './ThemeList'
 import useAuth from '../hooks/useAuth'
 
 export default function ConfigMenu() {
-  console.log('configmenu rendered')
   const { getRole, getToken, getUser, getLogout } = useAuth()
   const [configOpen, setConfigOpen] = useState<boolean>(false)
   const configMenuRef = useRef<HTMLDivElement | null>(null)
   const configMenuButtonRef = useRef<HTMLButtonElement | null>(null)
 
   // MANAGE CLICK OUTSIDE TO CLOSE CONFIG MENU
+  function toggleConfigMenu() {
+    setConfigOpen(!configOpen)
+  }
+
   useEffect(() => {
     if (configOpen) {
       document.addEventListener('mousedown', handleConfiglistener)
@@ -29,10 +31,6 @@ export default function ConfigMenu() {
     ) {
       setConfigOpen(false)
     }
-  }
-
-  function toggleConfigMenu() {
-    setConfigOpen(!configOpen)
   }
 
   // e: React.MouseEvent<HTMLAnchorElement, MouseEvent>

@@ -27,33 +27,41 @@ import Footer from './components/Footer'
 export default function RouterApp() {
   return (
     <Router>
-      <Header />
-      <Routes>
-        <Route path="/" element={<LayoutPublic />}>
-          <Route index element={<PageHome />} />
-          <Route path="login" element={<Login />} />
-          <Route path="register" element={<Register />} />
-          <Route path="about" element={<About />} />
-          <Route path="contact" element={<Contact />} />
-        </Route>
-        <Route element={<ProtectedRoutes />}>
-          <Route path="/admin" element={<LayoutAdmin />}>
-            <Route index element={<PanelAdmin />} />
-            <Route path="user" element={<UserAll />} />
-            <Route path="user/edit/:id" element={<UserUpdate />} />
-            <Route path="category" element={<CategoryAll />} />
-            <Route path="category/create" element={<CategoryStore />} />
-            <Route path="category/edit/:id" element={<CategoryUpdate />} />
-            <Route path="company" element={<CompanyAll />} />
-          </Route>
-          <Route path="/client" element={<LayoutClient />}>
-            <Route index element={<PanelClient />} />
-            <Route path="homme" element={<PageHome />} />
-          </Route>
-        </Route>
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-      <Footer />
+      <div className="grid grid-rows-[auto_1fr_auto] min-h-dvh">
+        <Header />
+        <RoutesApp />
+        <Footer />
+      </div>
     </Router>
+  )
+}
+
+function RoutesApp() {
+  return (
+    <Routes>
+      <Route path="/" element={<LayoutPublic />}>
+        <Route index element={<PageHome />} />
+        <Route path="login" element={<Login />} />
+        <Route path="register" element={<Register />} />
+        <Route path="about" element={<About />} />
+        <Route path="contact" element={<Contact />} />
+      </Route>
+      <Route element={<ProtectedRoutes />}>
+        <Route path="/admin" element={<LayoutAdmin />}>
+          <Route index element={<PanelAdmin />} />
+          <Route path="user" element={<UserAll />} />
+          <Route path="user/edit/:id" element={<UserUpdate />} />
+          <Route path="category" element={<CategoryAll />} />
+          <Route path="category/create" element={<CategoryStore />} />
+          <Route path="category/edit/:id" element={<CategoryUpdate />} />
+          <Route path="company" element={<CompanyAll />} />
+        </Route>
+        <Route path="/client" element={<LayoutClient />}>
+          <Route index element={<PanelClient />} />
+          <Route path="homme" element={<PageHome />} />
+        </Route>
+      </Route>
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   )
 }
