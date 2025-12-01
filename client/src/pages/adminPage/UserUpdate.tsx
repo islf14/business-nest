@@ -17,7 +17,7 @@ export default function UserUpdate() {
     () => ({
       headers: { Authorization: `Bearer ${getToken()}` }
     }),
-    []
+    [getToken]
   )
 
   useEffect(() => {

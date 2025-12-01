@@ -22,7 +22,7 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Public()
-  @Throttle({ default: { limit: 3, ttl: 120000 } })
+  @Throttle({ default: { limit: 4, ttl: 120000 } })
   @HttpCode(200)
   @UseGuards(LocalAuthGuard)
   @Post('login')

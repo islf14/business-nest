@@ -31,14 +31,14 @@ export default function RouterApp() {
       <Routes>
         <Route path="/" element={<LayoutPublic />}>
           <Route index element={<PageHome />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
+          <Route path="about" element={<About />} />
+          <Route path="contact" element={<Contact />} />
         </Route>
         <Route element={<ProtectedRoutes />}>
           <Route path="/admin" element={<LayoutAdmin />}>
-            <Route index path="home" element={<PanelAdmin />} />
+            <Route index element={<PanelAdmin />} />
             <Route path="user" element={<UserAll />} />
             <Route path="user/edit/:id" element={<UserUpdate />} />
             <Route path="category" element={<CategoryAll />} />

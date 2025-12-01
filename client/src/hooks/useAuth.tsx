@@ -1,4 +1,8 @@
+import { useNavigate } from 'react-router'
+
 export default function useAuth() {
+  const navigate = useNavigate()
+
   function getToken() {
     const tokenString = sessionStorage.getItem('token')
     if (tokenString) {
@@ -28,11 +32,18 @@ export default function useAuth() {
     sessionStorage.setItem('user', JSON.stringify(user))
     sessionStorage.setItem('role', JSON.stringify(role))
   }
+
+  function getLogout() {
+    sessionStorage.clear()
+    navigate('/login')
+  }
+
   const darkProps = {
     getToken,
     getUser,
     getRole,
-    saveToken
+    saveToken,
+    getLogout
   }
 
   return darkProps

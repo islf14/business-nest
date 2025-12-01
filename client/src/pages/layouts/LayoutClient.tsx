@@ -10,7 +10,7 @@ export default function LayoutClient() {
     if (getRole().toLowerCase() != 'user') {
       navigate('/')
     }
-  }, [navigate])
+  }, [navigate, getRole])
 
   return <Outlet />
 }

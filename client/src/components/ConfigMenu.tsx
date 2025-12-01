@@ -6,7 +6,8 @@ import ThemeList from './ThemeList'
 import useAuth from '../hooks/useAuth'
 
 export default function ConfigMenu() {
-  const { getRole, getToken, getUser } = useAuth()
+  console.log('configmenu rendered')
+  const { getRole, getToken, getUser, getLogout } = useAuth()
   const [configOpen, setConfigOpen] = useState<boolean>(false)
   const configMenuRef = useRef<HTMLDivElement | null>(null)
   const configMenuButtonRef = useRef<HTMLButtonElement | null>(null)
@@ -36,10 +37,8 @@ export default function ConfigMenu() {
 
   // e: React.MouseEvent<HTMLAnchorElement, MouseEvent>
   const logoutUser = () => {
-    // e.preventDefault()
     setConfigOpen(false)
-    sessionStorage.clear()
-    // navigate('/login')
+    getLogout()
   }
 
   const renderSession = () => {

@@ -23,7 +23,7 @@ export default function CategoryUpdate() {
         'Content-Type': 'multipart/form-data'
       }
     }),
-    []
+    [getToken]
   )
 
   // Image has been uploaded
@@ -85,7 +85,7 @@ export default function CategoryUpdate() {
         })
     }
     getCategoryById()
-  }, [id, header, navigate])
+  }, [id, header, navigate, getToken])
 
   const submitUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()

@@ -16,7 +16,7 @@ export default function Register() {
     if (getToken()) {
       navigate('/')
     }
-  }, [navigate])
+  }, [navigate, getToken])
 
   // width button e: React.MouseEvent<HTMLButtonElement>
   const submitRegistro = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -123,30 +123,8 @@ export default function Register() {
                   required
                 />
               </div>
-              <div className="flex items-start mb-5">
-                <div className="flex items-center h-5">
-                  <input
-                    id="terms"
-                    type="checkbox"
-                    value=""
-                    className="w-4 h-4 border border-gray-300 rounded-sm bg-gray-50 focus:ring-3 focus:ring-blue-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800"
-                    required
-                  />
-                </div>
-                <label
-                  htmlFor="terms"
-                  className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
-                >
-                  I agree with the{' '}
-                  <a
-                    href="#"
-                    className="text-blue-600 hover:underline dark:text-blue-500"
-                  >
-                    terms and conditions
-                  </a>
-                </label>
-              </div>
-              <p className="text-red-600">{message}</p>
+              <p className="text-red-600 min-h-2">{message}</p>
+
               <button
                 type="submit"
                 className="wflex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"

@@ -53,7 +53,7 @@ export default function Aside() {
       >
         <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
           <ul className="space-y-2 font-medium">
-            <li>
+            {/* <li>
               <NavLink
                 to={`/admin/home`}
                 className={({ isActive }) =>
@@ -74,7 +74,7 @@ export default function Aside() {
                 </svg>
                 <span className="ms-3">Dashboard</span>
               </NavLink>
-            </li>
+            </li> */}
             <li>
               <NavLink
                 to={`/admin/user`}

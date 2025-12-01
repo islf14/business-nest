@@ -11,7 +11,7 @@ export default function LayoutAdmin() {
     if (getRole().toLowerCase() != 'admin') {
       navigate('/')
     }
-  }, [navigate])
+  }, [navigate, getRole])
 
   function renderComponents() {
     if (getRole().toLowerCase() === 'admin') {

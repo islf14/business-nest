@@ -1,11 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { NavLink } from 'react-router'
-// import { getRole, getToken } from '../hooks/useAuth'
 import MenuIcon from './svg/MenuIcon'
 import useAuth from '../hooks/useAuth'
 
 export default function Navbar() {
-  console.log('Navbar rendered')
   const { getRole, getToken } = useAuth()
   const mainMenuRef = useRef<HTMLDivElement | null>(null)
   const mainMenuButtonRef = useRef<HTMLButtonElement | null>(null)
@@ -43,9 +41,9 @@ export default function Navbar() {
   //
 
   const itemsNavbar = [
-    { name: 'Home', path: '/' },
-    { name: 'About', path: '/about' },
-    { name: 'Contact', path: '/contact' }
+    { name: 'Home', path: '/' }
+    // { name: 'About', path: '/about' },
+    // { name: 'Contact', path: '/contact' }
   ]
 
   if (getToken()) {

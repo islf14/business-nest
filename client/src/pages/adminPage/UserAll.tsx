@@ -10,7 +10,7 @@ export default function UserAll() {
   const [users, setUsers] = useState<User[]>([])
   const token = useMemo(
     () => ({ headers: { Authorization: `Bearer ${getToken()}` } }),
-    []
+    [getToken]
   )
   useEffect(() => {
     const getUserAll = async () => {

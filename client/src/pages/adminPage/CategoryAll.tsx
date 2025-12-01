@@ -10,7 +10,7 @@ export default function CategoryAll() {
   const [categories, setCategories] = useState<Category[]>([])
   const token = useMemo(
     () => ({ headers: { Authorization: `Bearer ${getToken()}` } }),
-    []
+    [getToken]
   )
 
   const getCategoryAll = useCallback(async () => {
