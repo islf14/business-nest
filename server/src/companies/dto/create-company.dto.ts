@@ -16,15 +16,15 @@ export class CreateCompanyDto {
 
   @IsEmail()
   @IsOptional()
-  email?: string;
+  email: string;
 
   @IsString()
   @IsOptional()
-  phone?: string;
+  phone: string;
 
   @IsString()
   @IsOptional()
-  address?: string;
+  address: string;
 
   @IsString()
   @IsOptional()
@@ -32,7 +32,7 @@ export class CreateCompanyDto {
 
   @IsString()
   @IsOptional()
-  description?: string;
+  description: string;
 
   photoUrl?: string;
 

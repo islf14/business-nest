@@ -1,19 +1,15 @@
 import { StaticOrigin } from './app.interface';
+import { appOrigin, port } from './constants';
 
-const ACCEPTED_ORIGINS = [
-  'http://localhost:5173',
-  'http://localhost:4173',
-  `http://localhost:${process.env.PORT ?? 3000}`,
-  'https://business-nest.onrender.com',
-];
+const ACCEPTED_ORIGINS = [`http://localhost:${port}`, appOrigin];
 
-export const corsConfig = (whitelist: string[] = ACCEPTED_ORIGINS) => {
+export const corsConfig = () => {
   return {
     origin: function (
       origin: string | undefined,
       callback: (err: Error | null, origin?: StaticOrigin) => void,
     ) {
-      if (!origin || whitelist.indexOf(origin) !== -1) {
+      if (!origin || ACCEPTED_ORIGINS.indexOf(origin) !== -1) {
         callback(null, true);
       } else {
         callback(new Error('Not allowed by CORS'));

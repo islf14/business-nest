@@ -58,7 +58,7 @@ export class CategoriesController {
     return this.categoriesService.findAll();
   }
 
-  //
+  // Find a category
 
   @Get(':id')
   @CheckPolicies(new ReadCategoryPolicyHandler())
@@ -91,7 +91,7 @@ export class CategoriesController {
     return this.categoriesService.update({ id, updateCategoryDto });
   }
 
-  //
+  // Delete category
 
   @Delete(':id')
   @HttpCode(204)

@@ -30,10 +30,9 @@ import { Company } from 'generated/prisma';
 @Controller('companies')
 export class CompaniesController {
   //
-
   constructor(private readonly companiesService: CompaniesService) {}
 
-  //
+  // Create a company
 
   @Post()
   @CheckPolicies(new CreateCompanyPolicyHandler())
@@ -48,7 +47,7 @@ export class CompaniesController {
     return this.companiesService.create({ createCompanyDto });
   }
 
-  //
+  // Find All companies
 
   @Get()
   @CheckPolicies(new ReadCompanyPolicyHandler())
@@ -56,7 +55,7 @@ export class CompaniesController {
     return this.companiesService.findAll();
   }
 
-  //
+  // Find one company
 
   @Get(':id')
   @CheckPolicies(new ReadCompanyPolicyHandler())
@@ -68,7 +67,7 @@ export class CompaniesController {
     return this.companiesService.findOne({ id });
   }
 
-  //
+  // Update a company
 
   @Patch(':id')
   @CheckPolicies(new UpdateCompanyPolicyHandler())
@@ -88,7 +87,7 @@ export class CompaniesController {
     return this.companiesService.update({ id, updateCompanyDto });
   }
 
-  //
+  // Delete a company
 
   @Delete(':id')
   @HttpCode(204)

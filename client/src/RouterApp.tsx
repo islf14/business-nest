@@ -5,24 +5,26 @@ import LayoutClient from './pages/layouts/LayoutClient'
 
 //PUBLIC
 import PageHome from './pages/publicPage/PageHome'
-import ProtectedRoutes from './pages/authPage/ProtectedRoutes'
+import About from './pages/publicPage/About'
+import Contact from './pages/publicPage/Contact'
+
+import Header from './components/Header'
+import Footer from './components/Footer'
 
 //AUTH
 import Login from './pages/authPage/Login'
 import Register from './pages/authPage/Register'
+import ProtectedRoutes from './pages/authPage/ProtectedRoutes'
 import PanelAdmin from './pages/adminPage/PanelAdmin'
 import PanelClient from './pages/clientPage/PanelClient'
-
 import UserAll from './pages/adminPage/UserAll'
 import UserUpdate from './pages/adminPage/UserUpdate'
 import CategoryAll from './pages/adminPage/CategoryAll'
 import CategoryStore from './pages/adminPage/CategoryStore'
 import CategoryUpdate from './pages/adminPage/CategoryUpdate'
 import CompanyAll from './pages/adminPage/CompanyAll'
-import About from './pages/publicPage/About'
-import Contact from './pages/publicPage/Contact'
-import Header from './components/Header'
-import Footer from './components/Footer'
+import CompanyCreate from './pages/adminPage/CompanyCreate'
+import CompanyUpdate from './pages/adminPage/CompanyUpdate'
 
 export default function RouterApp() {
   return (
@@ -55,6 +57,8 @@ function RoutesApp() {
           <Route path="category/create" element={<CategoryStore />} />
           <Route path="category/edit/:id" element={<CategoryUpdate />} />
           <Route path="company" element={<CompanyAll />} />
+          <Route path="company/create" element={<CompanyCreate />} />
+          <Route path="company/edit/:id" element={<CompanyUpdate />} />
         </Route>
         <Route path="/client" element={<LayoutClient />}>
           <Route index element={<PanelClient />} />

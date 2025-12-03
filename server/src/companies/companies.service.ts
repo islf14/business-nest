@@ -10,7 +10,6 @@ import { FileService } from 'src/file/file.service';
 @Injectable()
 export class CompaniesService {
   //
-
   constructor(
     private prisma: PrismaService,
     private usersService: UsersService,
@@ -18,7 +17,7 @@ export class CompaniesService {
     private fileService: FileService,
   ) {}
 
-  //
+  // Create a company
 
   async create({
     createCompanyDto,
@@ -32,7 +31,7 @@ export class CompaniesService {
       id: createCompanyDto.userId,
     });
     if (!user || !category) {
-      throw new HttpException('Create company error', HttpStatus.BAD_REQUEST);
+      throw new HttpException('User or category error', HttpStatus.BAD_REQUEST);
     }
 
     const data: Prisma.CompanyCreateInput = {
@@ -55,19 +54,19 @@ export class CompaniesService {
     }
   }
 
-  //
+  // Find All companies
 
   findAll(): Promise<Company[]> {
     return this.prisma.company.findMany({ orderBy: { id: 'asc' } });
   }
 
-  //
+  // Find one company
 
   findOne({ id }: { id: number }): Promise<Company | null> {
     return this.prisma.company.findFirst({ where: { id } });
   }
 
-  //
+  // Update a company
 
   async update({
     id,
@@ -76,6 +75,7 @@ export class CompaniesService {
     id: number;
     updateCompanyDto: UpdateCompanyDto;
   }): Promise<Company> {
+    // Check if the company exists
     const company = await this.findOne({ id });
     if (!company) {
       throw new HttpException('update error', HttpStatus.BAD_REQUEST);
@@ -91,6 +91,7 @@ export class CompaniesService {
       photoUrl: updateCompanyDto.photoUrl,
     };
 
+    // Check if the user exists
     if (updateCompanyDto.userId && updateCompanyDto.userId !== company.userId) {
       const user = await this.usersService.findOne({
         id: updateCompanyDto.userId,
@@ -100,6 +101,8 @@ export class CompaniesService {
       }
       data.user = { connect: { id: updateCompanyDto.userId } };
     }
+
+    // Check if the category exists
     if (
       updateCompanyDto.categoryId &&
       updateCompanyDto.categoryId !== company.categoryId
@@ -124,7 +127,7 @@ export class CompaniesService {
     }
   }
 
-  //
+  // Delete a company
 
   async remove({ id }: { id: number }): Promise<Company> {
     const company = await this.findOne({ id });

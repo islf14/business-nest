@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import Api from '../../Api'
 import { Link } from 'react-router'
-import type { UserUpdateData } from '../../types'
+import type { UserNewData } from '../../types'
 import useAuth from '../../hooks/useAuth'
 
 export default function UserUpdate() {
@@ -20,9 +20,10 @@ export default function UserUpdate() {
     [getToken]
   )
 
+  // Load user
   useEffect(() => {
     const getUserById = async () => {
-      Api.getUserById(Number(id), token)
+      Api.findUser(Number(id), token)
         .then(({ data }) => {
           setName(data.name)
           setEmail(data.email)
@@ -38,10 +39,10 @@ export default function UserUpdate() {
     getUserById()
   }, [id, token, navigate])
 
+  // Update user
   const submitUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-
-    let data: UserUpdateData = {
+    let data: UserNewData = {
       name,
       email
     }
@@ -51,7 +52,7 @@ export default function UserUpdate() {
         password
       }
     }
-    Api.getUserUpdate(Number(id), data, token)
+    Api.updateUser(Number(id), data, token)
       .then((data) => {
         if (data.status == 200) {
           navigate('/admin/user')

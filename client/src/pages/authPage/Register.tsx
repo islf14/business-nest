@@ -11,6 +11,7 @@ export default function Register() {
   const [message, setMessage] = useState('')
   const password2 = useRef<HTMLInputElement | null>(null)
   const navigate = useNavigate()
+  const [color, setColor] = useState<boolean>(true)
 
   useEffect(() => {
     if (getToken()) {
@@ -22,14 +23,23 @@ export default function Register() {
   const submitRegistro = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     if (password === password2.current?.value) {
-      Api.getRegister({ name, email, password })
+      Api.register({ name, email, password })
         .then(() => {
-          navigate('/login')
+          setColor(true)
+          setMessage('Success!')
+          setTimeout(() => {
+            navigate('/login')
+          }, 500)
         })
         .catch(({ response }) => {
           console.log(response)
+          if (response.data && response.data.message) {
+            setColor(false)
+            setMessage(response.data.message)
+          }
         })
     } else {
+      setColor(false)
       setMessage('The passwords are different')
     }
   }
@@ -123,7 +133,13 @@ export default function Register() {
                   required
                 />
               </div>
-              <p className="text-red-600 min-h-2">{message}</p>
+              <p
+                className={`${
+                  color ? 'text-green-500' : 'text-red-500'
+                } min-h-2`}
+              >
+                {message}
+              </p>
 
               <button
                 type="submit"

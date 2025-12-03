@@ -42,6 +42,7 @@ export class UsersService {
   findAll(): Promise<UserDB[]> {
     return this.prisma.user.findMany({
       select: { id: true, name: true, email: true, role: true },
+      where: { role: 'USER' },
       orderBy: { id: 'asc' },
     });
   }

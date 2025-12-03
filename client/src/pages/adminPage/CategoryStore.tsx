@@ -1,14 +1,14 @@
 import { useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import Api from '../../Api'
-import type { CategoryData } from '../../types'
+import type { CategoryNewData } from '../../types'
 import useAuth from '../../hooks/useAuth'
 
 export default function CategoryStore() {
   const { getToken } = useAuth()
   const [name, setName] = useState<string>('')
   const [description, setDescription] = useState<string>('')
-  const [ord, setOrd] = useState<number>(0)
+  const [priority, setPriority] = useState<number>(0)
   const [photo, setPhoto] = useState<File>()
   const [message, setMessage] = useState<string>('')
   const navigate = useNavigate()
@@ -19,6 +19,7 @@ export default function CategoryStore() {
     }
   }
 
+  // Load image
   const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     const maxSize = 350 * 1024 // 350KB in bytes
@@ -33,19 +34,20 @@ export default function CategoryStore() {
     }
   }
 
+  // Save category
   const submitStore = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    let data: CategoryData = {
+    let data: CategoryNewData = {
       name,
       description,
-      ord
+      priority
     }
     if (photo) {
       data = { ...data, photo }
     }
 
-    await Api.getCategoryStore(data, header)
+    await Api.createCategory(data, header)
       .then(() => {
         navigate('/admin/category')
       })
@@ -57,6 +59,7 @@ export default function CategoryStore() {
         }
       })
   }
+
   return (
     <div className="p-4 md:ml-56">
       <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
@@ -90,7 +93,7 @@ export default function CategoryStore() {
                   htmlFor="order"
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
-                  Order
+                  Priority
                 </label>
                 <input
                   id="order"
@@ -99,8 +102,8 @@ export default function CategoryStore() {
                   placeholder="0"
                   min={0}
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  value={ord}
-                  onChange={(e) => setOrd(Number(e.target.value))}
+                  value={priority}
+                  onChange={(e) => setPriority(Number(e.target.value))}
                 />
               </div>
             </div>

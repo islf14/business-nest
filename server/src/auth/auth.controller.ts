@@ -54,7 +54,7 @@ export class AuthController {
       email: body.email,
     });
     if (!isAvailable) {
-      throw new HttpException('email already exists', 400);
+      throw new HttpException('Try a different email address', 400);
     }
     return this.authService.register(body);
   }

@@ -9,7 +9,7 @@ export class UpdateCategoryDto extends PartialType(CreateCategoryDto) {
   name?: string;
 
   @IsOptional()
-  ord?: number;
+  priority?: number;
 
   //
 }

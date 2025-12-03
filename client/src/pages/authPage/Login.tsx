@@ -20,7 +20,7 @@ export default function Login() {
 
   const submitLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    Api.getLogin({ email: emailProps.value, password: passwordProps.value })
+    Api.login({ email: emailProps.value, password: passwordProps.value })
       .then(({ data }) => {
         if (data && data.token && data.user) {
           saveToken(data.token, data.user, data.user.role)

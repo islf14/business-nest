@@ -25,12 +25,12 @@ export class CreateCategoryDto {
     if (value === 'false') return false;
     return value;
   })
-  menu?: boolean;
+  status?: boolean;
 
   @IsNumber()
   @IsNotEmpty()
   @Type(() => Number)
-  ord: number;
+  priority: number;
 
   photoUrl?: string;
 

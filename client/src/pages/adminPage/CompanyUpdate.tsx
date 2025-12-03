@@ -2,19 +2,23 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import Api from '../../Api'
 import useAuth from '../../hooks/useAuth'
-import type { Category, CategoryNewData } from '../../types'
+import type { Company, CompanyNewData } from '../../types'
 import { base_api_url } from '../../constants'
 
-export default function CategoryUpdate() {
+export default function CompanyUpdate() {
   const { getToken } = useAuth()
   const navigate = useNavigate()
   const { id } = useParams()
   const [name, setName] = useState<string>('')
+  const [email, setEmail] = useState<string>('')
+  const [phone, setPhone] = useState<string>('')
+  const [address, setAddress] = useState<string>('')
+  const [website, setWebsite] = useState<string>('')
   const [description, setDescription] = useState<string>('')
-  const [priority, setPriority] = useState<number>(0)
-  const [status, setStatus] = useState<boolean>(false)
   const [photo, setPhoto] = useState<File>()
   const [photo_url, setPhoto_url] = useState('foto.jpg')
+  const [userId, setUserId] = useState<number>(0)
+  const [categoryId, setCategoryId] = useState<number>(0)
   const [message, setMessage] = useState<string>('')
   const header = useMemo(
     () => ({
@@ -41,27 +45,25 @@ export default function CategoryUpdate() {
     }
   }
 
-  // Load category
+  // Load Company
   useEffect(() => {
     const getCategoryById = () => {
-      Api.findCategory(Number(id), header)
+      Api.findCompany(Number(id), header)
         .then(({ data }) => {
-          const category: Category = data
-          setName(category.name)
-          setDescription(category.description)
-          if (category.priority !== null) {
-            setPriority(Number(category.priority))
+          const company: Company = data
+          setName(company.name)
+          setEmail(company.email)
+          setPhone(company.phone)
+          setAddress(company.address)
+          setDescription(company.description)
+          if (company.website) {
+            setWebsite(company.website)
           }
-          if (
-            category &&
-            category.status !== null &&
-            category.status !== undefined
-          ) {
-            setStatus(category.status)
-          }
+          setUserId(Number(company.userId))
+          setCategoryId(Number(company.categoryId))
 
-          if (category.photoUrl) {
-            fetch(`${base_api_url}/file/${category.photoUrl}`, {
+          if (company.photoUrl) {
+            fetch(`${base_api_url}/file/${company.photoUrl}`, {
               method: 'GET',
               headers: {
                 Authorization: `Bearer ${getToken()}`
@@ -92,14 +94,18 @@ export default function CategoryUpdate() {
     getCategoryById()
   }, [id, header, navigate, getToken])
 
-  // Update category
+  // Create company
   const submitUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    let data: CategoryNewData = {
+    let data: CompanyNewData = {
       name,
+      email,
+      phone,
+      address,
       description,
-      priority,
-      status
+      website,
+      userId,
+      categoryId
     }
 
     if (photo) {
@@ -108,7 +114,7 @@ export default function CategoryUpdate() {
 
     await Api.updateCategory(Number(id), data, header)
       .then(() => {
-        navigate('/admin/category')
+        navigate('/admin/company')
       })
       .catch(({ response }) => {
         console.log(response)
@@ -128,60 +134,136 @@ export default function CategoryUpdate() {
     <div className="p-4 md:ml-56">
       <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-70">
         <div className="text-lg text-gray-900 dark:text-white mb-4">
-          Update category
+          Update company
         </div>
         <div className="">
           <form action="" onSubmit={submitUpdate}>
-            <div className="grid md:grid-cols-3 md:gap-6">
+            {/* Company name */}
+            <div className=" w-full mb-5 ">
+              <label
+                htmlFor="name"
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >
+                Name
+              </label>
+              <input
+                name="name"
+                id="name"
+                type="text"
+                autoComplete="name"
+                placeholder="Name"
+                className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </div>
+
+            {/* User id and category id */}
+            <div className="grid md:grid-cols-2 md:gap-6">
               <div className="relative z-0 w-full mb-5 group">
-                <label className="flex items-center justify-center mb-5 cursor-pointer">
-                  <input
-                    checked={status}
-                    onChange={() => setStatus(!status)}
-                    id="status"
-                    type="checkbox"
-                    className="sr-only peer"
-                  />
-                  <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:w-5 after:h-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600 dark:peer-checked:bg-blue-600"></div>
-                  <span className="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">
-                    Status
-                  </span>
+                <label
+                  htmlFor="userId"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  User
                 </label>
+                <select
+                  className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  name="userId"
+                  id="userId"
+                  value={userId}
+                  onChange={(e) => setUserId(Number(e.target.value))}
+                  required
+                >
+                  <option value={1}>holi</option>
+                  <option value={2}>holi</option>
+                </select>
               </div>
               <div className="relative z-0 w-full mb-5 group">
                 <label
-                  htmlFor="name"
+                  htmlFor="categoryId"
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
-                  Name
+                  Category
+                </label>
+                <select
+                  className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  name="categoryId"
+                  id="categoryId"
+                  value={categoryId}
+                  onChange={(e) => setCategoryId(Number(e.target.value))}
+                  required
+                >
+                  <option value={1}>holi</option>
+                  <option value={2}>holi</option>
+                </select>
+              </div>
+            </div>
+
+            {/* Email and phone */}
+            <div className="grid md:grid-cols-2 md:gap-6">
+              <div className="relative z-0 w-full mb-5 group">
+                <label
+                  htmlFor="email"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  Email
                 </label>
                 <input
+                  name="email"
+                  id="email"
                   type="text"
-                  id="name"
-                  name="name"
+                  autoComplete="email"
+                  placeholder="Email"
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  value={name}
-                  autoComplete="name"
-                  onChange={(e) => setName(e.target.value)}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
                 />
               </div>
               <div className="relative z-0 w-full mb-5 group">
                 <label
-                  htmlFor="order"
+                  htmlFor="phone"
                   className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
                 >
-                  Priority
+                  Phone
                 </label>
                 <input
-                  type="number"
-                  name="order"
-                  id="order"
+                  id="phone"
+                  name="phone"
+                  type="text"
+                  autoComplete="phone"
+                  placeholder="Phone"
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  value={priority}
-                  onChange={(e) => setPriority(Number(e.target.value))}
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
                 />
               </div>
             </div>
+
+            {/* Company address */}
+            <div className="relative z-0 w-full mb-5 group">
+              <label
+                htmlFor="address"
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >
+                Address
+              </label>
+              <input
+                name="address"
+                id="address"
+                type="text"
+                autoComplete="address"
+                placeholder="address"
+                className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                required
+              />
+            </div>
+
+            {/* Description */}
             <div className="mb-4">
               <label
                 htmlFor="description"
@@ -190,8 +272,9 @@ export default function CategoryUpdate() {
                 Description
               </label>
               <textarea
-                name="description"
                 id="description"
+                name="description"
+                placeholder="Description"
                 minLength={6}
                 className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 value={description}
@@ -199,6 +282,29 @@ export default function CategoryUpdate() {
                 required
               ></textarea>
             </div>
+
+            {/* Company website */}
+            <div className="relative z-0 w-full mb-5 group">
+              <label
+                htmlFor="website"
+                className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+              >
+                Website
+              </label>
+              <input
+                name="website"
+                id="website"
+                type="text"
+                autoComplete="website"
+                placeholder="Website"
+                className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                value={website}
+                onChange={(e) => setWebsite(e.target.value)}
+                required
+              />
+            </div>
+
+            {/* Company photo */}
             <div className="mb-4">
               <label
                 htmlFor="photo"
@@ -220,7 +326,11 @@ export default function CategoryUpdate() {
                 onChange={handleInputChange}
               />
             </div>
+
+            {/* Error message */}
             <p className="text-red-600">{message}</p>
+
+            {/* Buttons */}
             <div className="mt-4">
               <Link
                 className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
@@ -236,7 +346,7 @@ export default function CategoryUpdate() {
                 type="submit"
                 className="focus:outline-none text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
               >
-                Update category
+                Update company
               </button>
             </div>
           </form>

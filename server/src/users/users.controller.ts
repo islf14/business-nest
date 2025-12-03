@@ -25,14 +25,14 @@ export class UsersController {
   //
   constructor(private usersService: UsersService) {}
 
-  //
+  // Find all users
 
   @Get()
   findAll(): Promise<UserDB[]> {
     return this.usersService.findAll();
   }
 
-  //
+  // Find a user
 
   @Get(':id')
   @UsePipes(new ValidationPipe({ transform: true }))
@@ -43,7 +43,7 @@ export class UsersController {
     return this.usersService.findOne({ id });
   }
 
-  //
+  // Update a user
 
   @Patch(':id')
   @UsePipes(new ValidationPipe({ transform: true }))
@@ -64,7 +64,7 @@ export class UsersController {
     return this.usersService.update({ id, data: updateUserDto });
   }
 
-  //
+  // Delete a user
 
   @Delete(':id')
   @HttpCode(204)

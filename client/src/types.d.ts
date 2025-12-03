@@ -3,22 +3,53 @@ export type User = {
   name: string
 }
 
-export type UserUpdateData = {
+export type UserNewData = {
   name: string
   email: string
   password?: string
 }
 
+// CategoryAll
 export type Category = {
   id: number
   name: string
-  ord: number
+  description: string
+  status?: boolean
+  priority: number
+  photoUrl?: string
 }
 
-export type CategoryData = {
+// CategoryStore
+export type CategoryNewData = {
   name: string
   description?: string
-  ord: number
-  menu?: boolean
+  priority: number
+  status?: boolean
   photo?: File
+}
+
+// CompanyAll
+export type Company = {
+  id: number
+  name: string
+  email: string
+  phone: string
+  address: string
+  description: string
+  website?: string
+  photoUrl?: string
+  categoryId: number
+  userId: number
+}
+
+export type CompanyNewData = {
+  name: string
+  email: string
+  phone: string
+  address?: string
+  website?: string
+  description: string
+  photo?: File
+  categoryId: number
+  userId: number
 }

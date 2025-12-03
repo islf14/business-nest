@@ -3,32 +3,43 @@ import { base_api_url } from './constants'
 
 export default {
   //AUTH
-  getRegister: (data: object) =>
-    axios.post(`${base_api_url}/auth/register`, data),
-  getLogin: (data: object) => axios.post(`${base_api_url}/auth/login`, data),
-  getLogout: (data: object, token: object) =>
+  register: (data: object) => axios.post(`${base_api_url}/auth/register`, data),
+  login: (data: object) => axios.post(`${base_api_url}/auth/login`, data),
+  logout: (data: object, token: object) =>
     axios.post(`${base_api_url}/logout`, data, token),
 
   //ROL ADMIN
-  getUserAll: (token: object) => axios.get(`${base_api_url}/users`, token),
-  getUserById: (id: number, token: object) =>
+  allUsers: (token: object) => axios.get(`${base_api_url}/users`, token),
+  findUser: (id: number, token: object) =>
     axios.get(`${base_api_url}/users/${id}`, token),
-  getUserUpdate: (id: number, data: object, token: object) =>
+  updateUser: (id: number, data: object, token: object) =>
     axios.patch(`${base_api_url}/users/${id}`, data, token),
 
   //CATEGORY
-  getCategoryAll: (token: object) =>
+  allCategories: (token: object) =>
     axios.get(`${base_api_url}/categories`, token),
-  getCategoryStore: (data: object, token: object) =>
+  createCategory: (data: object, token: object) =>
     axios.post(`${base_api_url}/categories`, data, token),
-  getCategoryById: (id: number, token: object) =>
+  findCategory: (id: number, token: object) =>
     axios.get(`${base_api_url}/categories/${id}`, token),
-  getCategoryUpdate: (id: number, data: object, token: object) =>
+  updateCategory: (id: number, data: object, token: object) =>
     axios.patch(`${base_api_url}/categories/${id}`, data, token),
-  getCategoryDelete: (id: number, token: object) =>
+  deleteCategory: (id: number, token: object) =>
     axios.delete(`${base_api_url}/categories/${id}`, token),
 
   // IMAGE
   getCategoryImage: (name: string, token: object) =>
-    axios.get(`${base_api_url}/file/${name}`, token)
+    axios.get(`${base_api_url}/file/${name}`, token),
+
+  // COMPANY
+  allCompanies: (token: object) =>
+    axios.get(`${base_api_url}/companies`, token),
+  createCompany: (data: object, token: object) =>
+    axios.post(`${base_api_url}/companies`, data, token),
+  findCompany: (id: number, token: object) =>
+    axios.get(`${base_api_url}/companies/${id}`, token),
+  updateCompany: (id: number, data: object, token: object) =>
+    axios.patch(`${base_api_url}/companies/${id}`, data, token),
+  deleteCompany: (id: number, token: object) =>
+    axios.delete(`${base_api_url}/companies/${id}`, token)
 }

@@ -15,7 +15,7 @@ export default function UserAll() {
   useEffect(() => {
     const getUserAll = async () => {
       try {
-        const data = await Api.getUserAll(token)
+        const data = await Api.allUsers(token)
         setUsers(data.data)
       } catch (error) {
         if (

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { ExecutionContext, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
@@ -9,7 +9,11 @@ import { RolesModule } from './roles/roles.module';
 import { FileModule } from './file/file.module';
 import { CaslModule } from './casl/casl.module';
 import { CompaniesModule } from './companies/companies.module';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import {
+  ThrottlerGuard,
+  ThrottlerModule,
+  ThrottlerLimitDetail,
+} from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
@@ -17,14 +21,21 @@ import { join } from 'path';
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    // Rate limit for all routes
+    // Rate limit for all routes - no valid for dist
     ThrottlerModule.forRoot({
       throttlers: [
         {
           ttl: 60000,
-          limit: 20,
+          limit: 10,
         },
       ],
+      errorMessage: (
+        _context: ExecutionContext,
+        throttlerDetails: ThrottlerLimitDetail,
+      ) => {
+        const { limit, ttl } = throttlerDetails;
+        return `You have exceeded the rate limit of ${limit} requests per ${ttl / 1000} seconds.`;
+      },
     }),
     // dist from react-vite
     ServeStaticModule.forRoot({
