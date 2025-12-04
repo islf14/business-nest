@@ -14,43 +14,19 @@ export default function UserAll() {
   )
   useEffect(() => {
     const getUserAll = async () => {
-      try {
-        const data = await Api.allUsers(token)
-        setUsers(data.data)
-      } catch (error) {
-        if (
-          error &&
-          typeof error === 'object' &&
-          'status' in error &&
-          error.status === 401
-        ) {
-          if (
-            error &&
-            typeof error === 'object' &&
-            'response' in error &&
-            error.response &&
-            typeof error.response === 'object' &&
-            'data' in error.response &&
-            error.response.data &&
-            typeof error.response.data === 'object' &&
-            'message' in error.response.data
-          ) {
-            console.error(error.response.data.message)
+      await Api.allUsers(token)
+        .then(({ data }) => {
+          setUsers(data)
+        })
+        .catch(({ response }) => {
+          if (response.status === 401) {
+            if (response.data.message) {
+              console.error(response.data.message)
+            }
+            sessionStorage.clear()
+            navigate('/login')
           }
-
-          sessionStorage.clear()
-          navigate('/login')
-        }
-
-        if (
-          error &&
-          typeof error === 'object' &&
-          'status' in error &&
-          error.status === 403
-        ) {
-          navigate('/')
-        }
-      }
+        })
     }
     getUserAll()
   }, [token, navigate])

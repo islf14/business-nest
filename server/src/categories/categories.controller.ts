@@ -34,9 +34,9 @@ export class CategoriesController {
 
   constructor(private readonly categoriesService: CategoriesService) {}
 
-  // Create - limit 2 every 2 minutes
+  // Create - limit 5 every 2 minutes
 
-  @Throttle({ default: { limit: 3, ttl: 120000 } })
+  @Throttle({ default: { limit: 5, ttl: 120000 } })
   @Post()
   @CheckPolicies(new CreateCategoryPolicyHandler())
   @UseInterceptors(FileInterceptor('photo'))
@@ -72,7 +72,7 @@ export class CategoriesController {
 
   // Update a category
 
-  @Throttle({ default: { limit: 4, ttl: 120000 } })
+  @Throttle({ default: { limit: 10, ttl: 120000 } })
   @Patch(':id')
   @CheckPolicies(new UpdateCategoryPolicyHandler())
   @UsePipes(new ValidationPipe({ transform: true }))

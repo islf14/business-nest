@@ -8,7 +8,7 @@ export class UsersService {
   //
   constructor(private prisma: PrismaService) {}
 
-  //
+  // Find a user
 
   findOne({ id }: { id: number }): Promise<UserDB | null> {
     return this.prisma.user.findUnique({
@@ -17,13 +17,13 @@ export class UsersService {
     });
   }
 
-  //
+  // Find a user by email
 
   findOneByEmail({ email }: { email: string }): Promise<User | null> {
     return this.prisma.user.findUnique({ where: { email } });
   }
 
-  //
+  // Create a user
 
   async create({ data }: { data: Prisma.UserCreateInput }): Promise<UserShow> {
     try {
@@ -32,12 +32,18 @@ export class UsersService {
         data,
       });
     } catch (e: unknown) {
-      if (e instanceof Error) console.log('Create error:', e.message);
-      throw new HttpException('Create error', HttpStatus.INTERNAL_SERVER_ERROR);
+      if (e instanceof Error) {
+        const m = e.message.trim().replace(/(\r\n|\n|\r)/gm, '');
+        console.error(new Date().toLocaleString() + ' Create user:', m);
+      }
+      throw new HttpException(
+        'The user could not be created',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
-  //
+  // Find all users (user role)
 
   findAll(): Promise<UserDB[]> {
     return this.prisma.user.findMany({
@@ -47,7 +53,7 @@ export class UsersService {
     });
   }
 
-  //
+  // Update a user
 
   async update({
     id,
@@ -74,12 +80,18 @@ export class UsersService {
         data,
       });
     } catch (e: unknown) {
-      if (e instanceof Error) console.log('Update user error:', e.message);
-      throw new HttpException('Update error', HttpStatus.INTERNAL_SERVER_ERROR);
+      if (e instanceof Error) {
+        const m = e.message.trim().replace(/(\r\n|\n|\r)/gm, '');
+        console.error(new Date().toLocaleString() + ' Update user:', m);
+      }
+      throw new HttpException(
+        'The user could not be updated',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
-  //
+  // Delete a user
 
   async remove({ id }: { id: number }): Promise<UserDB> {
     const user = await this.findOne({ id });
@@ -92,8 +104,14 @@ export class UsersService {
         where: { id },
       });
     } catch (e: unknown) {
-      if (e instanceof Error) console.log('Remove error:', e.message);
-      throw new HttpException('Remove error', HttpStatus.INTERNAL_SERVER_ERROR);
+      if (e instanceof Error) {
+        const m = e.message.trim().replace(/(\r\n|\n|\r)/gm, '');
+        console.error(new Date().toLocaleString() + ' Remove user:', m);
+      }
+      throw new HttpException(
+        'The user could not be deleted',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 

@@ -26,14 +26,16 @@ import {
 } from 'src/casl/casl.interface';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Company } from 'generated/prisma';
+import { Throttle } from '@nestjs/throttler';
 
 @Controller('companies')
 export class CompaniesController {
   //
   constructor(private readonly companiesService: CompaniesService) {}
 
-  // Create a company
+  // Create a company - limit 4 every 2 minutes
 
+  @Throttle({ default: { limit: 5, ttl: 120000 } })
   @Post()
   @CheckPolicies(new CreateCompanyPolicyHandler())
   @UseInterceptors(FileInterceptor('photo'))
@@ -69,6 +71,7 @@ export class CompaniesController {
 
   // Update a company
 
+  @Throttle({ default: { limit: 10, ttl: 120000 } })
   @Patch(':id')
   @CheckPolicies(new UpdateCompanyPolicyHandler())
   @UseInterceptors(FileInterceptor('photo'))

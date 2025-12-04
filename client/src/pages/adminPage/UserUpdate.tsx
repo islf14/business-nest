@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router'
 import Api from '../../Api'
 import { Link } from 'react-router'
-import type { UserNewData } from '../../types'
+import type { User, UserNewData } from '../../types'
 import useAuth from '../../hooks/useAuth'
 
 export default function UserUpdate() {
@@ -25,8 +25,9 @@ export default function UserUpdate() {
     const getUserById = async () => {
       Api.findUser(Number(id), token)
         .then(({ data }) => {
-          setName(data.name)
-          setEmail(data.email)
+          const user: User = data
+          if (user.name) setName(data.name)
+          if (user.email) setEmail(data.email)
         })
         .catch(({ response }) => {
           console.error(response.data.message)

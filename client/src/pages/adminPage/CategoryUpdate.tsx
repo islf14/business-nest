@@ -47,11 +47,9 @@ export default function CategoryUpdate() {
       Api.findCategory(Number(id), header)
         .then(({ data }) => {
           const category: Category = data
-          setName(category.name)
-          setDescription(category.description)
-          if (category.priority !== null) {
-            setPriority(Number(category.priority))
-          }
+          if (category.name) setName(category.name)
+          if (category.description) setDescription(category.description)
+          if (category.priority !== null) setPriority(Number(category.priority))
           if (
             category &&
             category.status !== null &&
@@ -59,7 +57,6 @@ export default function CategoryUpdate() {
           ) {
             setStatus(category.status)
           }
-
           if (category.photoUrl) {
             fetch(`${base_api_url}/file/${category.photoUrl}`, {
               method: 'GET',

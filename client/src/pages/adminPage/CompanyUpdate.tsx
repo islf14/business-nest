@@ -2,12 +2,12 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router'
 import Api from '../../Api'
 import useAuth from '../../hooks/useAuth'
-import type { Company, CompanyNewData } from '../../types'
+import type { Category, Company, CompanyNewData, User } from '../../types'
 import { base_api_url } from '../../constants'
 
 export default function CompanyUpdate() {
-  const { getToken } = useAuth()
   const navigate = useNavigate()
+  const { getToken } = useAuth()
   const { id } = useParams()
   const [name, setName] = useState<string>('')
   const [email, setEmail] = useState<string>('')
@@ -20,6 +20,8 @@ export default function CompanyUpdate() {
   const [userId, setUserId] = useState<number>(0)
   const [categoryId, setCategoryId] = useState<number>(0)
   const [message, setMessage] = useState<string>('')
+  const [users, setUsers] = useState<User[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
   const header = useMemo(
     () => ({
       headers: {
@@ -30,20 +32,43 @@ export default function CompanyUpdate() {
     [getToken]
   )
 
-  // Image has been uploaded
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files
-    const maxSize = 350 * 1024 // 350KB in bytes
-    if (files) {
-      if (files[0] && files[0].size <= maxSize) {
-        setPhoto(files[0])
-        setMessage('')
-      } else {
-        e.target.value = ''
-        setMessage('Image must be smaller than 350KB')
-      }
+  // Load users and categories
+  useEffect(() => {
+    const getAllUsers = async () => {
+      await Api.allUsers(header)
+        .then(({ data }) => {
+          setUsers(data)
+        })
+        .catch(({ response }) => {
+          if (response.status === 401) {
+            if (response.data.message) {
+              console.error(response.data.message)
+            }
+            sessionStorage.clear()
+            navigate('/login')
+          }
+        })
     }
-  }
+
+    const getAllCategories = async () => {
+      await Api.allCategories(header)
+        .then(({ data }) => {
+          setCategories(data)
+        })
+        .catch(({ response }) => {
+          if (response.data.message) {
+            console.error(response.data.message)
+          }
+          if (response.status === 401) {
+            sessionStorage.clear()
+            navigate('/login')
+          }
+        })
+    }
+
+    getAllUsers()
+    getAllCategories()
+  }, [navigate, header])
 
   // Load Company
   useEffect(() => {
@@ -51,17 +76,14 @@ export default function CompanyUpdate() {
       Api.findCompany(Number(id), header)
         .then(({ data }) => {
           const company: Company = data
-          setName(company.name)
-          setEmail(company.email)
-          setPhone(company.phone)
-          setAddress(company.address)
-          setDescription(company.description)
-          if (company.website) {
-            setWebsite(company.website)
-          }
-          setUserId(Number(company.userId))
-          setCategoryId(Number(company.categoryId))
-
+          if (company.name) setName(company.name)
+          if (company.email) setEmail(company.email)
+          if (company.phone) setPhone(company.phone)
+          if (company.address) setAddress(company.address)
+          if (company.description) setDescription(company.description)
+          if (company.website) setWebsite(company.website)
+          if (company.userId) setUserId(Number(company.userId))
+          if (company.categoryId) setCategoryId(Number(company.categoryId))
           if (company.photoUrl) {
             fetch(`${base_api_url}/file/${company.photoUrl}`, {
               method: 'GET',
@@ -94,7 +116,22 @@ export default function CompanyUpdate() {
     getCategoryById()
   }, [id, header, navigate, getToken])
 
-  // Create company
+  // Image has been uploaded
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    const maxSize = 350 * 1024 // 350KB in bytes
+    if (files) {
+      if (files[0] && files[0].size <= maxSize) {
+        setPhoto(files[0])
+        setMessage('')
+      } else {
+        e.target.value = ''
+        setMessage('Image must be smaller than 350KB')
+      }
+    }
+  }
+
+  // Update company
   const submitUpdate = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     let data: CompanyNewData = {
@@ -111,8 +148,8 @@ export default function CompanyUpdate() {
     if (photo) {
       data = { ...data, photo }
     }
-
-    await Api.updateCategory(Number(id), data, header)
+    console.log(data)
+    await Api.updateCompany(Number(id), data, header)
       .then(() => {
         navigate('/admin/company')
       })
@@ -176,8 +213,12 @@ export default function CompanyUpdate() {
                   onChange={(e) => setUserId(Number(e.target.value))}
                   required
                 >
-                  <option value={1}>holi</option>
-                  <option value={2}>holi</option>
+                  <option value={0}>Select...</option>
+                  {users.map((item, index) => (
+                    <option key={index} value={item.id}>
+                      {item.name}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div className="relative z-0 w-full mb-5 group">
@@ -195,8 +236,12 @@ export default function CompanyUpdate() {
                   onChange={(e) => setCategoryId(Number(e.target.value))}
                   required
                 >
-                  <option value={1}>holi</option>
-                  <option value={2}>holi</option>
+                  <option value={0}>Select...</option>
+                  {categories.map((item, index) => (
+                    <option key={index} value={item.id}>
+                      {item.name}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -238,6 +283,7 @@ export default function CompanyUpdate() {
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
+                  required
                 />
               </div>
             </div>
@@ -300,7 +346,6 @@ export default function CompanyUpdate() {
                 className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 value={website}
                 onChange={(e) => setWebsite(e.target.value)}
-                required
               />
             </div>
 

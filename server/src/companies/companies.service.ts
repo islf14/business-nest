@@ -49,8 +49,14 @@ export class CompaniesService {
     try {
       return await this.prisma.company.create({ data });
     } catch (e: unknown) {
-      if (e instanceof Error) console.log('Create company error:', e.message);
-      throw new HttpException('Create error', HttpStatus.INTERNAL_SERVER_ERROR);
+      if (e instanceof Error) {
+        const m = e.message.trim().replace(/(\r\n|\n|\r)/gm, '');
+        console.error(new Date().toLocaleString() + ' Create company:', m);
+      }
+      throw new HttpException(
+        'The company could not be create',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -78,7 +84,7 @@ export class CompaniesService {
     // Check if the company exists
     const company = await this.findOne({ id });
     if (!company) {
-      throw new HttpException('update error', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Company not found', HttpStatus.BAD_REQUEST);
     }
 
     const data: Prisma.CompanyUpdateInput = {
@@ -97,7 +103,7 @@ export class CompaniesService {
         id: updateCompanyDto.userId,
       });
       if (!user) {
-        throw new HttpException('Update company error', HttpStatus.BAD_REQUEST);
+        throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
       }
       data.user = { connect: { id: updateCompanyDto.userId } };
     }
@@ -111,19 +117,29 @@ export class CompaniesService {
         id: updateCompanyDto.categoryId,
       });
       if (!category) {
-        throw new HttpException('Create company error', HttpStatus.BAD_REQUEST);
+        throw new HttpException('Category not found', HttpStatus.BAD_REQUEST);
       }
       data.category = { connect: { id: updateCompanyDto.categoryId } };
     }
 
     try {
-      return await this.prisma.company.update({
+      const result = await this.prisma.company.update({
         where: { id },
         data: data,
       });
+      if (company.photoUrl && updateCompanyDto.photoUrl) {
+        await this.fileService.deleteUploadedFile(company.photoUrl);
+      }
+      return result;
     } catch (e: unknown) {
-      if (e instanceof Error) console.log('Update error:', e.message);
-      throw new HttpException('update error', HttpStatus.INTERNAL_SERVER_ERROR);
+      if (e instanceof Error) {
+        const m = e.message.trim().replace(/(\r\n|\n|\r)/gm, '');
+        console.error(new Date().toLocaleString() + ' Update company:', m);
+      }
+      throw new HttpException(
+        'The company could not be updated',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -132,14 +148,20 @@ export class CompaniesService {
   async remove({ id }: { id: number }): Promise<Company> {
     const company = await this.findOne({ id });
     if (!company) {
-      throw new HttpException('remove error', HttpStatus.BAD_REQUEST);
+      throw new HttpException('Company not found', HttpStatus.BAD_REQUEST);
     }
     let deletedCom: Company;
     try {
       deletedCom = await this.prisma.company.delete({ where: { id } });
     } catch (e: unknown) {
-      if (e instanceof Error) console.log('Remove error:', e.message);
-      throw new HttpException('remove error', HttpStatus.INTERNAL_SERVER_ERROR);
+      if (e instanceof Error) {
+        const m = e.message.trim().replace(/(\r\n|\n|\r)/gm, '');
+        console.error(new Date().toLocaleString() + ' Remove company:', m);
+      }
+      throw new HttpException(
+        'The company could not be deleted',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
     if (company.photoUrl) {
       await this.fileService.deleteUploadedFile(company.photoUrl);

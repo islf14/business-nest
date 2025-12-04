@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router'
 import Api from '../../Api'
-import type { CompanyNewData } from '../../types'
+import type { Category, CompanyNewData, User } from '../../types'
 import useAuth from '../../hooks/useAuth'
 
 export default function CompanyCreate() {
+  const navigate = useNavigate()
   const { getToken } = useAuth()
   const [name, setName] = useState<string>('')
   const [email, setEmail] = useState<string>('')
@@ -16,13 +17,55 @@ export default function CompanyCreate() {
   const [userId, setUserId] = useState<number>(0)
   const [categoryId, setCategoryId] = useState<number>(0)
   const [message, setMessage] = useState<string>('')
-  const navigate = useNavigate()
-  const header = {
-    headers: {
-      Authorization: `Bearer ${getToken()}`,
-      'Content-Type': 'multipart/form-data'
+  const [users, setUsers] = useState<User[]>([])
+  const [categories, setCategories] = useState<Category[]>([])
+  const header = useMemo(
+    () => ({
+      headers: {
+        Authorization: `Bearer ${getToken()}`,
+        'Content-Type': 'multipart/form-data'
+      }
+    }),
+    [getToken]
+  )
+
+  // Load users and categories
+  useEffect(() => {
+    const getAllUsers = async () => {
+      await Api.allUsers(header)
+        .then(({ data }) => {
+          setUsers(data)
+        })
+        .catch(({ response }) => {
+          if (response.status === 401) {
+            if (response.data.message) {
+              console.error(response.data.message)
+            }
+            sessionStorage.clear()
+            navigate('/login')
+          }
+        })
     }
-  }
+
+    const getAllCategories = async () => {
+      await Api.allCategories(header)
+        .then(({ data }) => {
+          setCategories(data)
+        })
+        .catch(({ response }) => {
+          if (response.data.message) {
+            console.error(response.data.message)
+          }
+          if (response.status === 401) {
+            sessionStorage.clear()
+            navigate('/login')
+          }
+        })
+    }
+
+    getAllUsers()
+    getAllCategories()
+  }, [navigate, header])
 
   // Load image
   const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,6 +86,10 @@ export default function CompanyCreate() {
   const submitStore = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
+    if (userId === 0 || categoryId === 0) {
+      setMessage('Select user and category')
+      return
+    }
     let data: CompanyNewData = {
       name,
       email,
@@ -56,10 +103,9 @@ export default function CompanyCreate() {
     if (photo) {
       data = { ...data, photo }
     }
-
     await Api.createCompany(data, header)
       .then(() => {
-        navigate('/admin/category')
+        navigate('/admin/company')
       })
       .catch(({ response }) => {
         setMessage(response.data.message)
@@ -74,7 +120,7 @@ export default function CompanyCreate() {
     <div className="p-4 md:ml-56">
       <div className="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
         <div className="text-lg text-gray-900 dark:text-white mb-4">
-          Create category
+          Create company
         </div>
         <div className="">
           <form action="" onSubmit={submitStore}>
@@ -116,8 +162,12 @@ export default function CompanyCreate() {
                   onChange={(e) => setUserId(Number(e.target.value))}
                   required
                 >
-                  <option value={1}>holi</option>
-                  <option value={2}>holi</option>
+                  <option value={0}>Select...</option>
+                  {users.map((item, index) => (
+                    <option key={index} value={item.id}>
+                      {item.name}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div className="relative z-0 w-full mb-5 group">
@@ -135,8 +185,12 @@ export default function CompanyCreate() {
                   onChange={(e) => setCategoryId(Number(e.target.value))}
                   required
                 >
-                  <option value={1}>holi</option>
-                  <option value={2}>holi</option>
+                  <option value={0}>Select...</option>
+                  {categories.map((item, index) => (
+                    <option key={index} value={item.id}>
+                      {item.name}
+                    </option>
+                  ))}
                 </select>
               </div>
             </div>
@@ -178,6 +232,7 @@ export default function CompanyCreate() {
                   className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
+                  required
                 />
               </div>
             </div>
@@ -240,7 +295,6 @@ export default function CompanyCreate() {
                 className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                 value={website}
                 onChange={(e) => setWebsite(e.target.value)}
-                required
               />
             </div>
 
