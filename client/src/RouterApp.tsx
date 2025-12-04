@@ -62,7 +62,7 @@ function RoutesApp() {
         </Route>
         <Route path="/client" element={<LayoutClient />}>
           <Route index element={<PanelClient />} />
-          <Route path="homme" element={<PageHome />} />
+          <Route path="home" element={<PageHome />} />
         </Route>
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />

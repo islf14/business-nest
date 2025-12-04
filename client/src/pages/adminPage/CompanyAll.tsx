@@ -3,16 +3,20 @@ import { Link, useNavigate } from 'react-router'
 import Api from '../../Api'
 import useAuth from '../../hooks/useAuth'
 import type { Company } from '../../types'
+import TimedMessage from '../../components/TimedMessage'
 
 export default function CompanyAll() {
   const { getToken } = useAuth()
   const navigate = useNavigate()
   const [companies, setCompanies] = useState<Company[]>([])
+  const [message, setMessage] = useState<string>('')
+  const [color, setColor] = useState<boolean>(true)
   const token = useMemo(
     () => ({ headers: { Authorization: `Bearer ${getToken()}` } }),
     [getToken]
   )
 
+  // Load all companies
   const getAllCompanies = useCallback(async () => {
     await Api.allCompanies(token)
       .then(({ data }) => {
@@ -29,7 +33,8 @@ export default function CompanyAll() {
       })
       .catch(({ response }) => {
         if (response.data.message) {
-          console.error(response.data.message)
+          setColor(false)
+          setMessage(response.data.message)
         }
         if (response.status === 401) {
           sessionStorage.clear()
@@ -42,13 +47,20 @@ export default function CompanyAll() {
     getAllCompanies()
   }, [getAllCompanies])
 
-  const deleteCategoryById = async (id: number) => {
+  // Delete a company
+  const deleteCompanyById = async (id: number) => {
     const isDelete = window.confirm('Delete Category?')
     if (isDelete) {
       await Api.deleteCompany(id, token)
-        .then(() => {})
+        .then(() => {
+          setColor(true)
+          setMessage('Deleted')
+        })
         .catch(({ response }) => {
-          console.log(response)
+          if (response.data.message) {
+            setColor(false)
+            setMessage(response.data.message)
+          }
         })
       getAllCompanies()
     }
@@ -67,6 +79,14 @@ export default function CompanyAll() {
             </span>
           </Link>
         </div>
+        {message !== '' && (
+          <TimedMessage
+            message={message}
+            color={color}
+            duration={3000}
+            action={() => setMessage('')}
+          />
+        )}
         <div className="bg-gray-50 dark:bg-gray-800 overflow-auto mb-4">
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -108,7 +128,7 @@ export default function CompanyAll() {
                           <button
                             className="relative inline-flex items-center justify-center p-0.5 me-2 overflow-hidden text-sm font-medium text-gray-900 rounded-lg group bg-gradient-to-br from-pink-500 to-orange-400 group-hover:from-pink-500 group-hover:to-orange-400 hover:text-white dark:text-white focus:ring-4 focus:outline-none focus:ring-pink-200 dark:focus:ring-pink-800"
                             onClick={() => {
-                              deleteCategoryById(category.id)
+                              deleteCompanyById(category.id)
                             }}
                           >
                             <span className="relative px-5 py-2.5 transition-all ease-in duration-75 bg-white dark:bg-gray-900 rounded-md group-hover:bg-transparent group-hover:dark:bg-transparent">

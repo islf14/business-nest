@@ -3,16 +3,20 @@ import { Link, useNavigate } from 'react-router'
 import Api from '../../Api'
 import useAuth from '../../hooks/useAuth'
 import type { Category } from '../../types'
+import TimedMessage from '../../components/TimedMessage'
 
 export default function CategoryAll() {
   const { getToken } = useAuth()
   const navigate = useNavigate()
   const [categories, setCategories] = useState<Category[]>([])
+  const [message, setMessage] = useState<string>('')
+  const [color, setColor] = useState<boolean>(true)
   const token = useMemo(
     () => ({ headers: { Authorization: `Bearer ${getToken()}` } }),
     [getToken]
   )
 
+  // Get all categories
   const getCategoryAll = useCallback(async () => {
     await Api.allCategories(token)
       .then(({ data }) => {
@@ -30,7 +34,8 @@ export default function CategoryAll() {
       .catch(({ response }) => {
         // {response} is from AxiosError
         if (response.data.message) {
-          console.error(response.data.message)
+          setColor(false)
+          setMessage(response.data.message)
         }
         if (response.status === 401) {
           sessionStorage.clear()
@@ -43,13 +48,20 @@ export default function CategoryAll() {
     getCategoryAll()
   }, [getCategoryAll])
 
+  // Delete a category
   const deleteCategoryById = async (id: number) => {
     const isDelete = window.confirm('Delete Category?')
     if (isDelete) {
       await Api.deleteCategory(id, token)
-        .then(() => {})
+        .then(() => {
+          setColor(true)
+          setMessage('Deleted')
+        })
         .catch(({ response }) => {
-          console.log(response)
+          if (response.data.message) {
+            setColor(false)
+            setMessage(response.data.message)
+          }
         })
       getCategoryAll()
     }
@@ -68,6 +80,14 @@ export default function CategoryAll() {
             </span>
           </Link>
         </div>
+        {message !== '' && (
+          <TimedMessage
+            message={message}
+            color={color}
+            duration={3000}
+            action={() => setMessage('')}
+          />
+        )}
         <div className="bg-gray-50 dark:bg-gray-800 overflow-auto mb-4">
           <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
             <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">

@@ -86,7 +86,7 @@ export default function ConfigMenu() {
         ref={configMenuRef}
         className={`${
           configOpen ? '' : 'hidden'
-        } z-50 absolute translate-x-[-110px] my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow-sm dark:bg-gray-800 dark:divide-gray-600`}
+        } z-50 absolute -translate-x-[calc(100%-32px)] my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow-sm dark:bg-gray-800 dark:divide-gray-600`}
         id="user-dropdown"
       >
         {renderSession()}
