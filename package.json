@@ -1,7 +1,7 @@
 {
   "name": "business_nest",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "server/dist/index.js",
   "scripts": {
     "install": "cd server && npm install && cd ../client && npm install",
     "build": "npm run server-build && npm run client-build",

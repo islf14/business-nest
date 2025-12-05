@@ -2,7 +2,7 @@
 
 - App to list, create, show, update and delete business.
 
-- Use React, Typescript, Tailwind Css, PostgreSQL and Express.
+- Uses NestJS, Typescript, React, Tailwind Css, Vite and PostgreSQL.
 
 ## Requirements
 
@@ -26,20 +26,14 @@ npm install
 npm run build
 ```
 
-- To start the project, open two console and run:
+- To start the project, run the following command:
 
 ```bash
-npm run serve-start
+npm run start
 ```
 
-- In the second console run the following command:
+- To use, open in your browser (port set to env).
 
 ```bash
-npm run client-start
-```
-
-- To use, open in your browser.
-
-```bash
-http://localhost:4173/
+http://localhost:3000/
 ```
