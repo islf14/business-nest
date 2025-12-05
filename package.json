@@ -4,8 +4,9 @@
   "main": "server/dist/main.js",
   "scripts": {
     "install": "cd server && npm install && cd ../client && npm install",
-    "build": "npm run server-build && npm run client-build",
+    "build": "npm run server-build && npm run server-prisma && npm run client-build",
     "server-build": "cd server && npm run build",
+    "server-prisma": "cd server && npm run prisma",
     "start": "cd server && npm run start:prod",
     "server-start:dev": "cd server && npm run start:dev",
     "server-lint": "cd server && npm run lint",
