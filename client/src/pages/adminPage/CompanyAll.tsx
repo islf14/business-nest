@@ -27,9 +27,9 @@ export default function CompanyAll() {
               setCompanies(data)
             }
           } catch (err) {
-            console.log(err)
+            console.error(err)
           }
-        } else console.log('Error, the server responded with a text string.')
+        }
       })
       .catch(({ response }) => {
         if (response.data.message) {

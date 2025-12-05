@@ -27,11 +27,15 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Company } from 'generated/prisma';
 import { Throttle } from '@nestjs/throttler';
+import { FileService } from 'src/file/file.service';
 
 @Controller('companies')
 export class CompaniesController {
   //
-  constructor(private readonly companiesService: CompaniesService) {}
+  constructor(
+    private readonly companiesService: CompaniesService,
+    private fileService: FileService,
+  ) {}
 
   // Create a company - limit 4 every 2 minutes
 
@@ -39,12 +43,18 @@ export class CompaniesController {
   @Post()
   @CheckPolicies(new CreateCompanyPolicyHandler())
   @UseInterceptors(FileInterceptor('photo'))
-  create(
+  async create(
     @Body() createCompanyDto: CreateCompanyDto,
     @UploadedFile() photo: Express.Multer.File,
   ): Promise<Company> {
     if (photo) {
-      createCompanyDto.photoUrl = photo.filename;
+      const photoUrl = await this.fileService.uploadFile(
+        photo.buffer,
+        photo.originalname,
+      );
+      if (photoUrl) {
+        createCompanyDto.photoUrl = photoUrl;
+      }
     }
     return this.companiesService.create({ createCompanyDto });
   }
@@ -76,7 +86,7 @@ export class CompaniesController {
   @CheckPolicies(new UpdateCompanyPolicyHandler())
   @UseInterceptors(FileInterceptor('photo'))
   @UsePipes(new ValidationPipe({ transform: true }))
-  update(
+  async update(
     @Param('id') id: number,
     @Body() updateCompanyDto: UpdateCompanyDto,
     @UploadedFile() photo: Express.Multer.File,
@@ -85,7 +95,13 @@ export class CompaniesController {
       throw new HttpException('id must be a number', HttpStatus.BAD_REQUEST);
     }
     if (photo) {
-      updateCompanyDto.photoUrl = photo.filename;
+      const photoUrl = await this.fileService.uploadFile(
+        photo.buffer,
+        photo.originalname,
+      );
+      if (photoUrl) {
+        updateCompanyDto.photoUrl = photoUrl;
+      }
     }
     return this.companiesService.update({ id, updateCompanyDto });
   }

@@ -27,12 +27,16 @@ import {
   UpdateCategoryPolicyHandler,
 } from 'src/casl/casl.interface';
 import { Throttle } from '@nestjs/throttler';
+import { FileService } from 'src/file/file.service';
 
 @Controller('categories')
 export class CategoriesController {
   //
 
-  constructor(private readonly categoriesService: CategoriesService) {}
+  constructor(
+    private readonly categoriesService: CategoriesService,
+    private fileService: FileService,
+  ) {}
 
   // Create - limit 5 every 2 minutes
 
@@ -40,12 +44,18 @@ export class CategoriesController {
   @Post()
   @CheckPolicies(new CreateCategoryPolicyHandler())
   @UseInterceptors(FileInterceptor('photo'))
-  create(
+  async create(
     @Body() createCategoryDto: CreateCategoryDto,
     @UploadedFile() photo: Express.Multer.File,
   ): Promise<Category> {
     if (photo) {
-      createCategoryDto.photoUrl = photo.filename;
+      const photoUrl = await this.fileService.uploadFile(
+        photo.buffer,
+        photo.originalname,
+      );
+      if (photoUrl) {
+        createCategoryDto.photoUrl = photoUrl;
+      }
     }
     return this.categoriesService.create({ createCategoryDto });
   }
@@ -77,7 +87,7 @@ export class CategoriesController {
   @CheckPolicies(new UpdateCategoryPolicyHandler())
   @UsePipes(new ValidationPipe({ transform: true }))
   @UseInterceptors(FileInterceptor('photo'))
-  update(
+  async update(
     @Param('id') id: number,
     @Body() updateCategoryDto: UpdateCategoryDto,
     @UploadedFile() photo: Express.Multer.File,
@@ -86,7 +96,13 @@ export class CategoriesController {
       throw new HttpException('id must be a number', HttpStatus.BAD_REQUEST);
     }
     if (photo) {
-      updateCategoryDto.photoUrl = photo.filename;
+      const photoUrl = await this.fileService.uploadFile(
+        photo.buffer,
+        photo.originalname,
+      );
+      if (photoUrl) {
+        updateCategoryDto.photoUrl = photoUrl;
+      }
     }
     return this.categoriesService.update({ id, updateCategoryDto });
   }

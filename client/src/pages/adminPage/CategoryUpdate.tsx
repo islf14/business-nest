@@ -108,7 +108,6 @@ export default function CategoryUpdate() {
         navigate('/admin/category')
       })
       .catch(({ response }) => {
-        console.log(response)
         if (typeof response.data.message === 'string') {
           setMessage(response.data.message)
         } else {

@@ -32,7 +32,6 @@ export default function Register() {
           }, 500)
         })
         .catch(({ response }) => {
-          console.log(response)
           if (response.data && response.data.message) {
             setColor(false)
             setMessage(response.data.message)

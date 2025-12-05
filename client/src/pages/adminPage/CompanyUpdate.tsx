@@ -148,13 +148,11 @@ export default function CompanyUpdate() {
     if (photo) {
       data = { ...data, photo }
     }
-    console.log(data)
     await Api.updateCompany(Number(id), data, header)
       .then(() => {
         navigate('/admin/company')
       })
       .catch(({ response }) => {
-        console.log(response)
         if (typeof response.data.message === 'string') {
           setMessage(response.data.message)
         } else {
