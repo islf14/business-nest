@@ -12,6 +12,8 @@ export default function UserAll() {
     () => ({ headers: { Authorization: `Bearer ${getToken()}` } }),
     [getToken]
   )
+
+  // Get all users
   useEffect(() => {
     const getUserAll = async () => {
       await Api.allUsers(token)
