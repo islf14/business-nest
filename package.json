@@ -5,7 +5,7 @@
   "scripts": {
     "install": "npm run server-install && npm run client-install",
     "build": "npm run server-build && npm run server-prisma && npm run client-build",
-    "start": "cd server && npm run start:prod",
+    "start": "cd server && npm run start:vercel",
     "server-install": "cd server && npm install",
     "server-build": "cd server && npm run build",
     "server-prisma": "cd server && npm run prisma",
