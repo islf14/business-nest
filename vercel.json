@@ -13,7 +13,7 @@
     },
     {
       "source": "/(.*)",
-      "destination": "/server/public/dist/$1"
+      "destination": "/server/public/dist/index.html"
     }
   ]
 }
