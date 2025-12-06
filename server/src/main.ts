@@ -14,6 +14,7 @@ async function bootstrap() {
   app.use(ecors());
   app.use(csp());
 
+  // Swagger
   const config = new DocumentBuilder()
     .setTitle('Business directory')
     .setDescription(
