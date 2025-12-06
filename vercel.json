@@ -1,3 +1,19 @@
 {
-  "version": 2
+  "version": 2,
+  "builds": [
+    {
+      "src": "server/dist/main.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "/server/dist/main.js"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/server/public/dist/$1"
+    }
+  ]
 }
