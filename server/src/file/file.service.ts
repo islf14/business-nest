@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { promisify } from 'util';
 import fs from 'fs';
 import { join } from 'path';
-import { put } from '@vercel/blob';
+import { del, put } from '@vercel/blob';
 
 const unlinkAsync = promisify(fs.unlink);
 
@@ -40,6 +40,21 @@ export class FileService {
         );
       }
       return null;
+    }
+  }
+
+  async deleteFileByUrl(fileUrl: string): Promise<void> {
+    try {
+      await del(fileUrl);
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        const m = e.message.trim().replace(/(\r\n|\n|\r)/gm, '');
+        console.error(
+          new Date().toLocaleString() + ' File was not deleted:',
+          m,
+        );
+      }
+      return;
     }
   }
 }

@@ -6,7 +6,12 @@ export function csp() {
       directives: {
         'script-src': ["'self'"], //"'unsafe-inline'"
         'style-src': ["'self'"], //"'unsafe-inline'"
-        'img-src': ["'self'", 'data:', 'blob:'],
+        'img-src': [
+          "'self'",
+          'data:',
+          'blob:',
+          '*.public.blob.vercel-storage.com',
+        ],
         'font-src': ["'self'", 'https:', 'data:'],
         'connect-src': ["'self'"],
         'default-src': ["'self'"],

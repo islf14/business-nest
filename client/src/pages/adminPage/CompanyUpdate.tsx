@@ -3,7 +3,6 @@ import { Link, useNavigate, useParams } from 'react-router'
 import Api from '../../Api'
 import useAuth from '../../hooks/useAuth'
 import type { Category, Company, CompanyNewData, User } from '../../types'
-import { base_api_url } from '../../constants'
 
 export default function CompanyUpdate() {
   const navigate = useNavigate()
@@ -85,22 +84,7 @@ export default function CompanyUpdate() {
           if (company.userId) setUserId(Number(company.userId))
           if (company.categoryId) setCategoryId(Number(company.categoryId))
           if (company.photoUrl) {
-            fetch(`${base_api_url}/file/${company.photoUrl}`, {
-              method: 'GET',
-              headers: {
-                Authorization: `Bearer ${getToken()}`
-              }
-            })
-              .then(async (response) => {
-                const image = await response.blob()
-                if (image) {
-                  const objectUrl = URL.createObjectURL(image)
-                  setPhoto_url(objectUrl)
-                }
-              })
-              .catch((error) => {
-                console.error(error)
-              })
+            setPhoto_url(company.photoUrl)
           }
         })
         .catch(({ response }) => {

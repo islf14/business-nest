@@ -63,7 +63,7 @@ export class CategoriesService {
         data: updateCategoryDto,
       });
       if (category.photoUrl && updateCategoryDto.photoUrl) {
-        await this.fileService.deleteUploadedFile(category.photoUrl);
+        await this.fileService.deleteFileByUrl(category.photoUrl);
       }
       return result;
     } catch (e: unknown) {
@@ -99,7 +99,7 @@ export class CategoriesService {
       );
     }
     if (category.photoUrl) {
-      await this.fileService.deleteUploadedFile(category.photoUrl);
+      await this.fileService.deleteFileByUrl(category.photoUrl);
     }
     return deletedCat;
   }

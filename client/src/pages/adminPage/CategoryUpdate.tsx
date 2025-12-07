@@ -3,7 +3,6 @@ import { Link, useNavigate, useParams } from 'react-router'
 import Api from '../../Api'
 import useAuth from '../../hooks/useAuth'
 import type { Category, CategoryNewData } from '../../types'
-import { base_api_url } from '../../constants'
 
 export default function CategoryUpdate() {
   const { getToken } = useAuth()
@@ -58,22 +57,7 @@ export default function CategoryUpdate() {
             setStatus(category.status)
           }
           if (category.photoUrl) {
-            fetch(`${base_api_url}/file/${category.photoUrl}`, {
-              method: 'GET',
-              headers: {
-                Authorization: `Bearer ${getToken()}`
-              }
-            })
-              .then(async (response) => {
-                const image = await response.blob()
-                if (image) {
-                  const objectUrl = URL.createObjectURL(image)
-                  setPhoto_url(objectUrl)
-                }
-              })
-              .catch((error) => {
-                console.error(error)
-              })
+            setPhoto_url(category.photoUrl)
           }
         })
         .catch(({ response }) => {
